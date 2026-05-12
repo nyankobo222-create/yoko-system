@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理者パネル</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Helvetica Neue', Arial, 'Hiragino Sans', sans-serif;
+      background: #0f0f23;
+      color: #fff;
+      padding: 24px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .page-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+    .badge {
+      display: inline-block; padding: 4px 14px; border-radius: 20px;
+      font-size: 0.82rem; font-weight: 700;
+    }
+    .b-lobby  { background: #333; color: #aaa; }
+    .b-question { background: #1a7cfa; }
+    .b-revealed { background: #f5a623; color: #000; }
+    .b-finished { background: #27c96a; color: #000; }
+
+    /* Cards */
+    .card { background: #14143a; border-radius: 16px; padding: 22px 24px; margin-bottom: 18px; }
+    .card-title { font-size: 0.9rem; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px; }
+
+    /* Stats row */
+    .stats-row { display: flex; gap: 32px; }
+    .stat { text-align: center; }
+    .stat-val { font-size: 2.4rem; font-weight: 900; color: #4ecca3; line-height: 1; }
+    .stat-lbl { font-size: 0.8rem; color: #888; margin-top: 2px; }
+
+    /* Buttons */
+    .btn {
+      padding: 12px 22px; border: none; border-radius: 10px;
+      font-size: 0.95rem; font-weight: 700; cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn:active { transform: scale(0.96); }
+    .btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+    .btn-green  { background: #27c96a; color: #000; }
+    .btn-blue   { background: #1a7cfa; }
+    .btn-red    { background: #e8394d; }
+    .btn-yellow { background: #f5a623; color: #000; }
+    .btn-purple { background: #7c4dff; }
+    .btn-gray   { background: #333; }
+
+    /* Controls */
+    .ctrl-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
+    .ctrl-label { font-size: 0.9rem; color: #888; flex-shrink: 0; }
+    .ctrl-num {
+      width: 80px; padding: 10px; text-align: center;
+      background: #0f0f23; border: 1px solid #2a2a4a; border-radius: 8px;
+      color: #fff; font-size: 1rem;
+    }
+    .ctrl-num:focus { outline: none; border-color: #4ecca3; }
+
+    /* ABCD reveal buttons */
+    .reveal-btns { display: flex; gap: 12px; margin-top: 4px; flex-wrap: wrap; }
+    .btn-ans {
+      padding: 18px 36px; border: none; border-radius: 14px;
+      font-size: 1.8rem; font-weight: 900; cursor: pointer; color: #fff;
+      transition: transform 0.1s, opacity 0.15s, box-shadow 0.15s;
+    }
+    .btn-ans:hover { transform: scale(1.06); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+    .btn-ans:active { transform: scale(0.96); }
+    .btn-ans:disabled { opacity: 0.25; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-ans.A { background: #e8394d; }
+    .btn-ans.B { background: #1a7cfa; }
+    .btn-ans.C { background: #f5a623; }
+    .btn-ans.D { background: #27c96a; }
+
+    /* Info tip */
+    .tip { background: rgba(78,204,163,0.08); border: 1px solid #2a4a3a; border-radius: 8px; padding: 10px 14px; font-size: 0.85rem; color: #4ecca3; margin-bottom: 14px; }
+
+    /* Divider */
+    hr { border: none; border-top: 1px solid #1e1e3a; margin: 16px 0; }
+
+    /* Participant list */
+    .p-list { max-height: 320px; overflow-y: auto; }
+    .p-row { display: flex; align-items: center; gap: 12px; padding: 9px 2px; border-bottom: 1px solid #1e1e3a; }
+    .p-row:last-child { border-bottom: none; }
+    .p-pos  { color: #888; width: 28px; font-size: 0.85rem; flex-shrink: 0; }
+    .p-name { flex: 1; font-size: 0.95rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .p-hist { font-size: 0.7rem; color: #555; display: flex; gap: 4px; }
+    .p-hist span.ok { color: #27c96a; }
+    .p-hist span.ng { color: #e8394d; }
+    .p-hist span.sk { color: #555; }
+    .p-score { font-size: 1rem; font-weight: 700; color: #ffd700; flex-shrink: 0; }
+    .p-empty { text-align: center; color: #555; padding: 24px; font-size: 0.9rem; }
+
+    /* Answer display after reveal */
+    .revealed-info { background: #1e1e3a; border-radius: 10px; padding: 12px 16px; font-size: 0.95rem; margin-top: 14px; }
+    .revealed-info .ans-lbl { color: #888; font-size: 0.82rem; }
+    .revealed-info .ans-val { font-size: 1.4rem; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<div class="page-title">
+  🎯 管理者パネル
+  <span class="badge b-lobby" id="phase-badge">ロビー</span>
+</div>
+
+<!-- Stats -->
+<div class="card">
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-val" id="s-players">0</div>
+      <div class="stat-lbl">参加者</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="s-qnum">-</div>
+      <div class="stat-lbl">現在の問題</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="s-resp">0/0</div>
+      <div class="stat-lbl">回答済み</div>
+    </div>
+  </div>
+</div>
+
+<!-- Controls -->
+<div class="card">
+  <div class="card-title">問題コントロール</div>
+  <div class="tip">💡 問題文はスライドで表示してください。このシステムは回答収集・集計・採点を担当します。</div>
+
+  <div class="ctrl-row">
+    <button class="btn btn-purple" id="btn-test" onclick="startTest()" style="font-size:0.9rem">🔧 テスト問題を開始</button>
+    <span style="color:#555;font-size:0.82rem;margin-left:4px">（得点に入りません）</span>
+  </div>
+
+  <div class="ctrl-row">
+    <span class="ctrl-label">問題番号</span>
+    <input class="ctrl-num" type="number" id="inp-qnum" value="1" min="1" max="20">
+    <span class="ctrl-label">制限時間(秒)</span>
+    <input class="ctrl-num" type="number" id="inp-dur" value="30" min="10" max="120">
+    <button class="btn btn-green" id="btn-start" onclick="startQ()">▶ 開始</button>
+  </div>
+
+  <hr>
+
+  <div class="card-title" style="margin-bottom:10px">正解を選んでください（開始後に有効）</div>
+  <div class="reveal-btns">
+    <button class="btn-ans A" id="ba-A" onclick="reveal('A')" disabled>A</button>
+    <button class="btn-ans B" id="ba-B" onclick="reveal('B')" disabled>B</button>
+    <button class="btn-ans C" id="ba-C" onclick="reveal('C')" disabled>C</button>
+    <button class="btn-ans D" id="ba-D" onclick="reveal('D')" disabled>D</button>
+  </div>
+  <div id="revealed-info" style="display:none" class="revealed-info">
+    <div class="ans-lbl">正解</div>
+    <div class="ans-val" id="revealed-ans"></div>
+  </div>
+
+  <hr>
+
+  <div class="ctrl-row">
+    <button class="btn btn-purple" id="btn-finish" onclick="finish()">🏆 最終結果を表示</button>
+    <button class="btn btn-gray" onclick="reset()" style="margin-left:auto">↺ ゲームリセット</button>
+  </div>
+</div>
+
+<!-- Participants -->
+<div class="card">
+  <div class="card-title">参加者リスト（ランキング順）</div>
+  <div class="p-list" id="p-list">
+    <div class="p-empty">まだ参加者がいません</div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+  const MEDALS = ['🥇','🥈','🥉'];
+  let curState = { phase: 'lobby', questionNumber: 0 };
+  let liveStats = { total: 0, playerCount: 0 };
+
+  socket.emit('admin:join');
+
+  socket.on('admin:init', ({ state, players }) => {
+    curState = state;
+    renderState(state);
+    renderPlayers(players);
+  });
+
+  socket.on('game:state', state => {
+    curState = state;
+    renderState(state);
+    if (state.phase === 'question') {
+      liveStats = { total: 0, playerCount: liveStats.playerCount };
+      updateResp();
+      document.getElementById('revealed-info').style.display = 'none';
+      // Auto-set next question number input
+      document.getElementById('inp-qnum').value = state.questionNumber + 1;
+    }
+    if (state.phase === 'lobby') {
+      document.getElementById('revealed-info').style.display = 'none';
+    }
+  });
+
+  socket.on('stats:live', stats => {
+    liveStats = stats;
+    updateResp();
+  });
+
+  socket.on('admin:players', players => {
+    document.getElementById('s-players').textContent = players.length;
+    liveStats.playerCount = players.length;
+    renderPlayers(players);
+    updateResp();
+  });
+
+  socket.on('game:revealed', ({ correctAnswer, ranking }) => {
+    document.getElementById('revealed-ans').textContent = correctAnswer;
+    document.getElementById('revealed-info').style.display = 'block';
+    renderPlayers(ranking);
+  });
+
+  socket.on('game:finished', ranking => { renderPlayers(ranking); });
+
+  socket.on('player:count', count => {
+    liveStats.playerCount = count;
+    updateResp();
+  });
+
+  // ---- Render ----
+
+  function renderState(state) {
+    const phases = { lobby: ['ロビー','b-lobby'], question: ['出題中','b-question'], revealed: ['正解発表','b-revealed'], finished: ['終了','b-finished'] };
+    const [label, cls] = phases[state.phase] || ['不明','b-lobby'];
+    const badge = document.getElementById('phase-badge');
+    badge.textContent = label;
+    badge.className = 'badge ' + cls;
+
+    document.getElementById('s-qnum').textContent = state.isTest ? 'テスト' : (state.questionNumber || '-');
+
+    const isQ = state.phase === 'question';
+    document.getElementById('btn-start').disabled = isQ;
+    ['A','B','C','D'].forEach(c => document.getElementById('ba-'+c).disabled = !isQ);
+  }
+
+  function updateResp() {
+    document.getElementById('s-resp').textContent = `${liveStats.total||0}/${liveStats.playerCount||0}`;
+  }
+
+  function renderPlayers(players) {
+    const el = document.getElementById('p-list');
+    if (!players.length) {
+      el.innerHTML = '<div class="p-empty">まだ参加者がいません</div>';
+      return;
+    }
+    el.innerHTML = players.map((p, i) => {
+      const hist = (p.answers || []).map(a => {
+        if (!a.choice) return '<span class="sk">－</span>';
+        return a.correct ? '<span class="ok">✓</span>' : '<span class="ng">✗</span>';
+      }).join('');
+      return `
+        <div class="p-row">
+          <span class="p-pos">${MEDALS[i] || (i+1)}</span>
+          <span class="p-name">${p.name}</span>
+          <span class="p-hist">${hist}</span>
+          <span class="p-score">${p.score.toLocaleString()} pt</span>
+        </div>`;
+    }).join('');
+  }
+
+  // ---- Actions ----
+
+  function startTest() {
+    const dur = parseInt(document.getElementById('inp-dur').value) || 30;
+    socket.emit('admin:start_question', { questionNumber: 0, duration: dur, isTest: true });
+  }
+
+  function startQ() {
+    const qnum = parseInt(document.getElementById('inp-qnum').value) || 1;
+    const dur = parseInt(document.getElementById('inp-dur').value) || 30;
+    socket.emit('admin:start_question', { questionNumber: qnum, duration: dur, isTest: false });
+  }
+
+  function reveal(ans) {
+    if (!confirm(`正解は「${ans}」で合っていますか？`)) return;
+    socket.emit('admin:reveal', ans);
+  }
+
+  function finish() {
+    if (!confirm('最終ランキングをスクリーンに表示します。よろしいですか？')) return;
+    socket.emit('admin:finish');
+  }
+
+  function reset() {
+    if (!confirm('ゲームをリセットします。全参加者データが削除されます。よろしいですか？')) return;
+    socket.emit('admin:reset');
+  }
+</script>
+</body>
+</html>

@@ -26,6 +26,11 @@ let players = {};
 let audience = {};
 // socketId -> { name, score, currentPick, currentPickTime, answers[] }
 
+// 離脱後120秒間データを保持して復帰に備える
+let savedPlayers = {};  // name -> { score, answers, timer }
+let savedAudience = {}; // name -> { score, answers, timer }
+const REJOIN_TTL = 120_000;
+
 // ---- Helpers ----
 
 function calcPoints(responseMs, durationSec, isCorrect) {
@@ -102,12 +107,18 @@ io.on('connection', (socket) => {
     if (!name || typeof name !== 'string') return;
     const trimmed = name.trim().slice(0, 20);
     if (!trimmed) return;
+    // 保存データがあれば復元
+    const saved = savedPlayers[trimmed];
+    if (saved) {
+      clearTimeout(saved.timer);
+      delete savedPlayers[trimmed];
+    }
     players[socket.id] = {
       name: trimmed,
-      score: 0,
+      score: saved?.score ?? 0,
       currentAnswer: null,
       currentAnswerTime: null,
-      answers: [],
+      answers: saved?.answers ?? [],
     };
     socket.emit('player:joined', { name: trimmed, state });
     io.emit('player:count', Object.keys(players).length);
@@ -135,12 +146,17 @@ io.on('connection', (socket) => {
     if (!name || typeof name !== 'string') return;
     const trimmed = name.trim().slice(0, 20);
     if (!trimmed) return;
+    const saved = savedAudience[trimmed];
+    if (saved) {
+      clearTimeout(saved.timer);
+      delete savedAudience[trimmed];
+    }
     audience[socket.id] = {
       name: trimmed,
-      score: 0,
+      score: saved?.score ?? 0,
       currentPick: null,
       currentPickTime: null,
-      answers: [],
+      answers: saved?.answers ?? [],
     };
     socket.join('audience');
     socket.emit('audience:joined', { name: trimmed, state, repList: getRepList() });
@@ -285,17 +301,31 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     if (players[socket.id]) {
+      const p = players[socket.id];
+      // 120秒間データ保持（復帰できるようにする）
+      savedPlayers[p.name] = {
+        score: p.score,
+        answers: p.answers,
+        timer: setTimeout(() => delete savedPlayers[p.name], REJOIN_TTL),
+      };
       delete players[socket.id];
       io.emit('player:count', Object.keys(players).length);
       io.to('admin').emit('admin:players', getRanking());
       io.to('audience').emit('rep:list', getRepList());
     }
     if (audience[socket.id]) {
+      const a = audience[socket.id];
+      savedAudience[a.name] = {
+        score: a.score,
+        answers: a.answers,
+        timer: setTimeout(() => delete savedAudience[a.name], REJOIN_TTL),
+      };
       delete audience[socket.id];
       io.to('admin').emit('admin:audience', getAudienceRanking());
       io.to('admin').emit('admin:audience_count', Object.keys(audience).length);
     }
   });
+
 });
 
 // ---- Start ----

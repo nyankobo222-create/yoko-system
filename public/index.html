@@ -297,6 +297,13 @@
   const COLORS = { A: '#e8394d', B: '#1a7cfa', C: '#f5a623', D: '#27c96a' };
   const socket = io();
 
+  // 再接続時に自動でrejoin（名前とロールが確定済みの場合のみ）
+  socket.on('connect', () => {
+    if (!myName || !role) return;
+    if (role === 'rep') socket.emit('player:join', myName);
+    else if (role === 'aud') socket.emit('audience:join', myName);
+  });
+
   let role = null; // 'rep' or 'aud'
   let myName = '';
   let myScore = 0;

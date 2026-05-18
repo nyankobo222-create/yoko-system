@@ -19,9 +19,7 @@
 
     /* ===== LOBBY ===== */
     #v-lobby {
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
+      align-items: center; justify-content: center; gap: 20px;
       background: radial-gradient(ellipse at 50% 0%, #1a1a4a 0%, #0a0a1a 70%);
     }
     .lobby-title { font-size: 3.5rem; font-weight: 900; letter-spacing: 0.04em; }
@@ -33,41 +31,23 @@
 
     /* ===== QUESTION ===== */
     #v-question { gap: 0; }
-    .q-topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
+    .q-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
     .q-num { font-size: 2.2rem; font-weight: 900; }
     .q-responded { font-size: 1.1rem; color: #888; }
     .q-timer {
-      font-size: 3.5rem;
-      font-weight: 900;
-      color: #4ecca3;
-      min-width: 100px;
-      text-align: right;
-      font-variant-numeric: tabular-nums;
+      font-size: 3.5rem; font-weight: 900; color: #4ecca3;
+      min-width: 100px; text-align: right; font-variant-numeric: tabular-nums;
     }
-
-    /* テスト問題バナー */
     .test-banner {
-      display: none;
-      background: linear-gradient(135deg, #7c4dff, #4ecca3);
-      border-radius: 14px;
-      padding: 16px 28px;
-      margin-bottom: 16px;
-      text-align: center;
+      display: none; background: linear-gradient(135deg, #7c4dff, #4ecca3);
+      border-radius: 14px; padding: 16px 28px; margin-bottom: 16px; text-align: center;
     }
     .test-banner.visible { display: block; }
     .test-banner-title { font-size: 1.4rem; font-weight: 900; margin-bottom: 4px; }
     .test-banner-desc { font-size: 1rem; opacity: 0.9; }
-
-    /* Progress bar */
-    .progress-outer { width: 100%; height: 8px; background: #1a1a3e; border-radius: 4px; margin-bottom: 32px; overflow: hidden; }
+    .progress-outer { width: 100%; height: 8px; background: #1a1a3e; border-radius: 4px; margin-bottom: 20px; overflow: hidden; }
     .progress-inner { height: 100%; border-radius: 4px; transition: width 0.3s linear, background 0.5s; }
-
-    /* Bars */
+    .q-body { flex: 1; display: flex; gap: 32px; }
     .bars { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 18px; }
     .bar-row { display: flex; align-items: center; gap: 18px; height: 80px; }
     .bar-lbl {
@@ -86,56 +66,85 @@
     .bar-fill.C { background: linear-gradient(90deg, #c87d10, #f5a623); }
     .bar-fill.D { background: linear-gradient(90deg, #1d9e52, #27c96a); }
     .bar-count { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); font-size: 1.6rem; font-weight: 700; }
-    .bar-correct-mark { font-size: 2rem; flex-shrink: 0; width: 40px; text-align: center; }
 
-    /* Fast list */
-    .fast-area { margin-top: 20px; }
-    .fast-title { font-size: 0.9rem; color: #555; margin-bottom: 8px; }
-    .fast-chips { display: flex; flex-wrap: wrap; gap: 10px; }
-    .fast-chip {
-      background: #14143a; border-radius: 20px;
-      padding: 6px 16px; font-size: 0.95rem;
+    /* Audience pick panel during question */
+    .aud-panel {
+      width: 280px; flex-shrink: 0;
+      display: flex; flex-direction: column; gap: 0;
     }
-    .fast-chip .medal { margin-right: 4px; }
-    .fast-chip .t { color: #888; font-size: 0.82rem; margin-left: 4px; }
+    .aud-panel-title { font-size: 0.88rem; color: #666; margin-bottom: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .aud-responded { font-size: 0.9rem; color: #888; margin-bottom: 12px; }
+    .aud-pick-list { flex: 1; display: flex; flex-direction: column; gap: 6px; overflow: hidden; }
+    .aud-pick-row {
+      display: flex; align-items: center; gap: 10px;
+      background: #14143a; border-radius: 10px; padding: 8px 14px;
+      font-size: 0.95rem;
+    }
+    .aud-pick-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .aud-pick-count { color: #6c63ff; font-weight: 700; font-size: 1rem; }
+    .aud-pick-bar-wrap { width: 60px; height: 6px; background: #0a0a1a; border-radius: 3px; overflow: hidden; }
+    .aud-pick-bar-fill { height: 100%; background: #6c63ff; border-radius: 3px; transition: width 0.4s; }
 
     /* ===== REVEALED ===== */
     #v-revealed { gap: 0; }
     .correct-banner {
       text-align: center; font-size: 2.4rem; font-weight: 900;
-      padding: 18px; border-radius: 18px; margin-bottom: 24px; color: #000;
+      padding: 18px; border-radius: 18px; margin-bottom: 20px; color: #000;
     }
-    .revealed-body { display: flex; gap: 40px; flex: 1; }
-    .revealed-bars { flex: 1.4; display: flex; flex-direction: column; justify-content: center; gap: 16px; }
-    .revealed-ranking { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-    .rv-rank-title { font-size: 1rem; color: #888; margin-bottom: 14px; }
+    .revealed-body { display: flex; gap: 32px; flex: 1; min-height: 0; }
+    .revealed-bars { flex: 1.2; display: flex; flex-direction: column; justify-content: center; gap: 14px; }
+    .revealed-ranking { flex: 1; display: flex; flex-direction: column; }
+    .rv-rank-title { font-size: 0.9rem; color: #888; margin-bottom: 10px; }
     .rv-rank-row {
       display: flex; align-items: center; gap: 14px;
-      padding: 10px 16px; border-radius: 12px; margin-bottom: 8px;
-      font-size: 1.15rem; background: #14143a;
+      padding: 8px 14px; border-radius: 12px; margin-bottom: 6px;
+      font-size: 1.05rem; background: #14143a;
     }
     .rv-rank-row.top1 { background: rgba(255,215,0,0.15); border: 1px solid #ffd700; }
     .rv-rank-row.top2 { background: rgba(192,192,192,0.12); border: 1px solid #c0c0c0; }
     .rv-rank-row.top3 { background: rgba(205,127,50,0.12); border: 1px solid #cd7f32; }
-    .rv-pos { width: 36px; text-align: center; font-size: 1.2rem; }
+    .rv-pos { width: 32px; text-align: center; font-size: 1.1rem; }
     .rv-name { flex: 1; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .rv-score { font-weight: 700; color: #ffd700; font-size: 1.1rem; }
+    .rv-score { font-weight: 700; color: #ffd700; }
+    .bar-correct-mark { font-size: 1.8rem; flex-shrink: 0; width: 36px; text-align: center; }
+
+    /* Audience result strip */
+    .aud-result-strip {
+      margin-top: 14px;
+      background: rgba(108,99,255,0.1); border: 1px solid rgba(108,99,255,0.3);
+      border-radius: 14px; padding: 14px 20px;
+      display: flex; align-items: center; gap: 24px;
+    }
+    .aud-res-hit { font-size: 1rem; color: #6c63ff; font-weight: 700; }
+    .aud-res-hit span { font-size: 1.6rem; color: #fff; }
+    .aud-res-correct { font-size: 0.95rem; color: #4ecca3; }
+    .aud-res-top { display: flex; gap: 12px; margin-left: auto; }
+    .aud-res-chip {
+      background: #14143a; border-radius: 20px;
+      padding: 6px 14px; font-size: 0.88rem;
+    }
+    .aud-res-chip .medal { margin-right: 4px; }
 
     /* ===== FINISHED ===== */
-    #v-finished { align-items: center; justify-content: center; gap: 0; }
-    .fin-title { font-size: 3rem; font-weight: 900; margin-bottom: 32px; }
-    .fin-ranking { width: 100%; max-width: 700px; }
-    .fin-row {
-      display: flex; align-items: center; gap: 20px;
-      padding: 14px 24px; border-radius: 14px; margin-bottom: 12px;
-      font-size: 1.4rem;
+    #v-finished { align-items: stretch; justify-content: center; gap: 0; padding: 40px 56px; }
+    .fin-title { font-size: 2.6rem; font-weight: 900; margin-bottom: 24px; text-align: center; }
+    .fin-columns { display: flex; gap: 40px; flex: 1; min-height: 0; }
+    .fin-col { flex: 1; display: flex; flex-direction: column; }
+    .fin-col-title {
+      font-size: 1rem; color: #888; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 14px;
+      padding-bottom: 8px; border-bottom: 1px solid #1e1e3a;
     }
-    .fin-row.r1 { background: rgba(255,215,0,0.2); border: 2px solid #ffd700; font-size: 1.6rem; }
-    .fin-row.r2 { background: rgba(192,192,192,0.15); border: 1px solid #c0c0c0; font-size: 1.5rem; }
+    .fin-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 10px 18px; border-radius: 12px; margin-bottom: 8px; font-size: 1.2rem;
+    }
+    .fin-row.r1 { background: rgba(255,215,0,0.2); border: 2px solid #ffd700; font-size: 1.4rem; }
+    .fin-row.r2 { background: rgba(192,192,192,0.15); border: 1px solid #c0c0c0; font-size: 1.3rem; }
     .fin-row.r3 { background: rgba(205,127,50,0.15); border: 1px solid #cd7f32; }
     .fin-row.rn { background: #14143a; }
-    .fin-pos { width: 56px; text-align: center; font-size: 1.8rem; }
-    .fin-name { flex: 1; font-weight: 700; }
+    .fin-pos { width: 44px; text-align: center; font-size: 1.5rem; }
+    .fin-name { flex: 1; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .fin-score { font-weight: 900; color: #ffd700; }
   </style>
 </head>
@@ -158,19 +167,23 @@
   </div>
   <div class="q-topbar">
     <div class="q-num" id="q-num">問題 1</div>
-    <div class="q-responded" id="q-responded">0 / 0 人</div>
+    <div class="q-responded" id="q-responded">0 / 0 人回答</div>
     <div class="q-timer" id="q-timer">30</div>
   </div>
   <div class="progress-outer"><div class="progress-inner" id="prog-bar" style="width:100%"></div></div>
-  <div class="bars" id="bars-live">
-    <div class="bar-row"><div class="bar-lbl A">A</div><div class="bar-track"><div class="bar-fill A" id="bf-A" style="width:0%"></div><span class="bar-count" id="bc-A">0</span></div></div>
-    <div class="bar-row"><div class="bar-lbl B">B</div><div class="bar-track"><div class="bar-fill B" id="bf-B" style="width:0%"></div><span class="bar-count" id="bc-B">0</span></div></div>
-    <div class="bar-row"><div class="bar-lbl C">C</div><div class="bar-track"><div class="bar-fill C" id="bf-C" style="width:0%"></div><span class="bar-count" id="bc-C">0</span></div></div>
-    <div class="bar-row"><div class="bar-lbl D">D</div><div class="bar-track"><div class="bar-fill D" id="bf-D" style="width:0%"></div><span class="bar-count" id="bc-D">0</span></div></div>
-  </div>
-  <div class="fast-area">
-    <div class="fast-title">⚡ 早押し順</div>
-    <div class="fast-chips" id="fast-chips"></div>
+  <div class="q-body">
+    <div class="bars" id="bars-live">
+      <div class="bar-row"><div class="bar-lbl A">A</div><div class="bar-track"><div class="bar-fill A" id="bf-A" style="width:0%"></div><span class="bar-count" id="bc-A">0</span></div></div>
+      <div class="bar-row"><div class="bar-lbl B">B</div><div class="bar-track"><div class="bar-fill B" id="bf-B" style="width:0%"></div><span class="bar-count" id="bc-B">0</span></div></div>
+      <div class="bar-row"><div class="bar-lbl C">C</div><div class="bar-track"><div class="bar-fill C" id="bf-C" style="width:0%"></div><span class="bar-count" id="bc-C">0</span></div></div>
+      <div class="bar-row"><div class="bar-lbl D">D</div><div class="bar-track"><div class="bar-fill D" id="bf-D" style="width:0%"></div><span class="bar-count" id="bc-D">0</span></div></div>
+    </div>
+    <!-- Audience pick panel -->
+    <div class="aud-panel">
+      <div class="aud-panel-title">👥 会場の予測</div>
+      <div class="aud-responded" id="aud-responded">0 / 0 人予測済み</div>
+      <div class="aud-pick-list" id="aud-pick-list"></div>
+    </div>
   </div>
 </div>
 
@@ -180,16 +193,30 @@
   <div class="revealed-body">
     <div class="revealed-bars" id="rv-bars"></div>
     <div class="revealed-ranking">
-      <div class="rv-rank-title">📊 現在のランキング</div>
+      <div class="rv-rank-title">📊 代表者ランキング</div>
       <div id="rv-ranking"></div>
     </div>
+  </div>
+  <div class="aud-result-strip" id="aud-result-strip" style="display:none">
+    <div class="aud-res-hit">👥 会場的中 <span id="aud-hit-count">0/0人</span></div>
+    <div class="aud-res-correct" id="aud-correct-reps"></div>
+    <div class="aud-res-top" id="aud-res-top"></div>
   </div>
 </div>
 
 <!-- FINISHED -->
 <div id="v-finished" class="view">
   <div class="fin-title">🏆 最終ランキング</div>
-  <div class="fin-ranking" id="fin-ranking"></div>
+  <div class="fin-columns">
+    <div class="fin-col">
+      <div class="fin-col-title">🏆 代表者</div>
+      <div id="fin-rep-ranking"></div>
+    </div>
+    <div class="fin-col">
+      <div class="fin-col-title">🔮 会場予測</div>
+      <div id="fin-aud-ranking"></div>
+    </div>
+  </div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
@@ -200,7 +227,6 @@
   let timerRaf = null;
   let playerCount = 0;
 
-  // Generate QR
   const joinUrl = window.location.origin + '/';
   document.getElementById('lobby-url').textContent = joinUrl;
   fetch(`/qr?url=${encodeURIComponent(joinUrl)}`)
@@ -227,6 +253,7 @@
       document.getElementById('q-num').textContent = state.isTest ? '動作テスト' : `問題 ${state.questionNumber}`;
       document.getElementById('test-banner').classList.toggle('visible', !!state.isTest);
       resetBars();
+      resetAudPanel();
       startTimer(state);
       showView('v-question');
     } else if (state.phase === 'finished') {
@@ -236,22 +263,21 @@
 
   socket.on('stats:live', stats => {
     updateLiveBars(stats);
-    document.getElementById('q-responded').textContent = `${stats.total} / ${stats.playerCount} 人`;
-
-    const chips = document.getElementById('fast-chips');
-    chips.innerHTML = stats.responded.slice(0, 8).map((r, i) =>
-      `<div class="fast-chip"><span class="medal">${MEDALS[i] || (i+1)+'.'}</span>${r.name}<span class="t">${(r.time/1000).toFixed(2)}s</span></div>`
-    ).join('');
+    document.getElementById('q-responded').textContent = `代表者 ${stats.total} / ${stats.playerCount} 人回答`;
   });
 
-  socket.on('game:revealed', ({ correctAnswer, stats, ranking }) => {
+  socket.on('audience:pick_stats', stats => {
+    updateAudPanel(stats);
+  });
+
+  socket.on('game:revealed', ({ correctAnswer, stats, ranking, correctReps, audienceRanking, audiencePickStats }) => {
     cancelAnimationFrame(timerRaf);
 
     const banner = document.getElementById('correct-banner');
     banner.textContent = `✓ 正解は ${correctAnswer} ！`;
     banner.style.background = COLORS[correctAnswer];
 
-    // Bars
+    // Rep bars
     const barsEl = document.getElementById('rv-bars');
     const max = Math.max(1, ...Object.values(stats.counts));
     barsEl.innerHTML = ['A', 'B', 'C', 'D'].map(c => {
@@ -269,10 +295,10 @@
         </div>`;
     }).join('');
 
-    // Ranking top 7
+    // Rep ranking top 6
     const rvEl = document.getElementById('rv-ranking');
     const clsMap = ['top1','top2','top3'];
-    rvEl.innerHTML = ranking.slice(0, 7).map((p, i) =>
+    rvEl.innerHTML = ranking.slice(0, 6).map((p, i) =>
       `<div class="rv-rank-row ${clsMap[i]||''}">
         <div class="rv-pos">${MEDALS[i] || (i+1)}</div>
         <div class="rv-name">${p.name}</div>
@@ -280,19 +306,52 @@
       </div>`
     ).join('');
 
+    // Audience result strip
+    const strip = document.getElementById('aud-result-strip');
+    if (audiencePickStats && audienceRanking) {
+      strip.style.display = 'flex';
+      const hitCount = audienceRanking.filter(a => {
+        const lastAns = a.answers[a.answers.length - 1];
+        return lastAns?.correct;
+      }).length;
+      const totalPredicted = audiencePickStats.total;
+      document.getElementById('aud-hit-count').textContent = `${hitCount}/${totalPredicted}人的中`;
+
+      const correctRepsText = correctReps.length > 0
+        ? `✅ 正解者：${correctReps.join('、')}`
+        : '❌ 正解者なし';
+      document.getElementById('aud-correct-reps').textContent = correctRepsText;
+
+      const topEl = document.getElementById('aud-res-top');
+      topEl.innerHTML = audienceRanking.slice(0, 3).map((a, i) =>
+        `<div class="aud-res-chip"><span class="medal">${MEDALS[i]}</span>${a.name} ${a.score.toLocaleString()}pt</div>`
+      ).join('');
+    } else {
+      strip.style.display = 'none';
+    }
+
     showView('v-revealed');
   });
 
-  socket.on('game:finished', ranking => {
-    const finEl = document.getElementById('fin-ranking');
+  socket.on('game:finished', ({ repRanking, audienceRanking }) => {
     const cls = ['r1','r2','r3'];
-    finEl.innerHTML = ranking.slice(0, 10).map((p, i) =>
+
+    document.getElementById('fin-rep-ranking').innerHTML = repRanking.slice(0, 7).map((p, i) =>
       `<div class="fin-row ${cls[i]||'rn'}">
         <div class="fin-pos">${MEDALS[i] || (i+1)+'位'}</div>
         <div class="fin-name">${p.name}</div>
         <div class="fin-score">${p.score.toLocaleString()} pt</div>
       </div>`
     ).join('');
+
+    document.getElementById('fin-aud-ranking').innerHTML = audienceRanking.slice(0, 7).map((a, i) =>
+      `<div class="fin-row ${cls[i]||'rn'}">
+        <div class="fin-pos">${MEDALS[i] || (i+1)+'位'}</div>
+        <div class="fin-name">${a.name}</div>
+        <div class="fin-score">${a.score.toLocaleString()} pt</div>
+      </div>`
+    ).join('');
+
     showView('v-finished');
   });
 
@@ -303,8 +362,7 @@
       document.getElementById('bf-'+c).style.width = '0%';
       document.getElementById('bc-'+c).textContent = '0';
     });
-    document.getElementById('q-responded').textContent = '0 / 0 人';
-    document.getElementById('fast-chips').innerHTML = '';
+    document.getElementById('q-responded').textContent = '代表者 0 / 0 人回答';
   }
 
   function updateLiveBars(stats) {
@@ -314,6 +372,27 @@
       document.getElementById('bf-'+c).style.width = (cnt / max * 100) + '%';
       document.getElementById('bc-'+c).textContent = cnt;
     });
+  }
+
+  // ---- Audience pick panel ----
+
+  function resetAudPanel() {
+    document.getElementById('aud-pick-list').innerHTML = '';
+    document.getElementById('aud-responded').textContent = '0 / 0 人予測済み';
+    document.getElementById('aud-result-strip').style.display = 'none';
+  }
+
+  function updateAudPanel(stats) {
+    document.getElementById('aud-responded').textContent = `${stats.total} / ${stats.audienceCount} 人予測済み`;
+    const sorted = Object.entries(stats.counts).sort((a, b) => b[1] - a[1]);
+    const maxCount = sorted.length > 0 ? sorted[0][1] : 1;
+    document.getElementById('aud-pick-list').innerHTML = sorted.slice(0, 8).map(([name, count]) =>
+      `<div class="aud-pick-row">
+        <div class="aud-pick-name">${name}</div>
+        <div class="aud-pick-bar-wrap"><div class="aud-pick-bar-fill" style="width:${Math.round(count/maxCount*100)}%"></div></div>
+        <div class="aud-pick-count">${count}人</div>
+      </div>`
+    ).join('');
   }
 
   // ---- Timer ----
@@ -328,12 +407,10 @@
       const remaining = Math.max(0, endTime - Date.now());
       const sec = Math.ceil(remaining / 1000);
       const pct = (remaining / (state.questionDuration * 1000)) * 100;
-
       timerEl.textContent = sec;
       timerEl.style.color = pct > 40 ? '#4ecca3' : pct > 15 ? '#f5a623' : '#e8394d';
       progEl.style.width = pct + '%';
       progEl.style.background = pct > 40 ? '#4ecca3' : pct > 15 ? '#f5a623' : '#e8394d';
-
       if (remaining > 0) timerRaf = requestAnimationFrame(tick);
     }
     tick();

@@ -114,7 +114,11 @@
   <div class="stats-row">
     <div class="stat">
       <div class="stat-val" id="s-players">0</div>
-      <div class="stat-lbl">参加者</div>
+      <div class="stat-lbl">代表者</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="s-audience">0</div>
+      <div class="stat-lbl">会場参加者</div>
     </div>
     <div class="stat">
       <div class="stat-val" id="s-qnum">-</div>
@@ -122,7 +126,7 @@
     </div>
     <div class="stat">
       <div class="stat-val" id="s-resp">0/0</div>
-      <div class="stat-lbl">回答済み</div>
+      <div class="stat-lbl">代表者回答</div>
     </div>
   </div>
 </div>
@@ -184,10 +188,11 @@
 
   socket.emit('admin:join');
 
-  socket.on('admin:init', ({ state, players }) => {
+  socket.on('admin:init', ({ state, players, audience, audienceCount }) => {
     curState = state;
     renderState(state);
     renderPlayers(players);
+    document.getElementById('s-audience').textContent = audienceCount || 0;
   });
 
   socket.on('game:state', state => {
@@ -223,7 +228,11 @@
     renderPlayers(ranking);
   });
 
-  socket.on('game:finished', ranking => { renderPlayers(ranking); });
+  socket.on('admin:audience', () => {});
+  socket.on('admin:audience_count', count => {
+    document.getElementById('s-audience').textContent = count;
+  });
+  socket.on('game:finished', ({ repRanking }) => { renderPlayers(repRanking); });
 
   socket.on('player:count', count => {
     liveStats.playerCount = count;

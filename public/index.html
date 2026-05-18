@@ -21,37 +21,47 @@
     .screen { display: none; width: 100%; max-width: 460px; flex-direction: column; align-items: center; }
     .screen.active { display: flex; }
 
-    /* === JOIN === */
+    /* === ROLE SELECTION === */
     .logo { font-size: 3rem; margin-bottom: 8px; }
     .title { font-size: 1.8rem; font-weight: 800; margin-bottom: 4px; }
     .subtitle { color: #888; margin-bottom: 32px; font-size: 0.95rem; }
+    .role-btns { width: 100%; display: flex; flex-direction: column; gap: 16px; }
+    .btn-role {
+      width: 100%; padding: 22px 18px;
+      font-size: 1.15rem; font-weight: 700;
+      border: none; border-radius: 16px; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .btn-role:active { transform: scale(0.97); }
+    .btn-role .role-icon { font-size: 2.2rem; }
+    .btn-role .role-desc { font-size: 0.85rem; opacity: 0.85; font-weight: 400; }
+    .btn-role.rep { background: linear-gradient(135deg, #e8394d, #c0263a); color: #fff; }
+    .btn-role.aud { background: linear-gradient(135deg, #6c63ff, #4ecca3); color: #fff; }
+
+    /* === JOIN === */
     .input-name {
-      width: 100%;
-      padding: 18px;
-      font-size: 1.2rem;
-      border-radius: 14px;
-      border: 2px solid #2a2a4a;
-      background: #1a1a3e;
-      color: #fff;
-      text-align: center;
-      margin-bottom: 14px;
-      transition: border-color 0.2s;
+      width: 100%; padding: 18px;
+      font-size: 1.2rem; border-radius: 14px;
+      border: 2px solid #2a2a4a; background: #1a1a3e; color: #fff;
+      text-align: center; margin-bottom: 14px; transition: border-color 0.2s;
     }
     .input-name:focus { outline: none; border-color: #6c63ff; }
     .btn-join {
-      width: 100%;
-      padding: 18px;
-      font-size: 1.2rem;
-      font-weight: 700;
+      width: 100%; padding: 18px;
+      font-size: 1.2rem; font-weight: 700;
       background: linear-gradient(135deg, #6c63ff, #4ecca3);
-      color: #fff;
-      border: none;
-      border-radius: 14px;
-      cursor: pointer;
+      color: #fff; border: none; border-radius: 14px; cursor: pointer;
       transition: opacity 0.2s, transform 0.1s;
     }
     .btn-join:active { transform: scale(0.97); }
     .btn-join:disabled { opacity: 0.4; cursor: not-allowed; }
+    .role-tag {
+      display: inline-block; padding: 4px 14px; border-radius: 20px;
+      font-size: 0.82rem; font-weight: 700; margin-bottom: 16px;
+    }
+    .role-tag.rep { background: rgba(232,57,77,0.2); color: #e8394d; border: 1px solid #e8394d; }
+    .role-tag.aud { background: rgba(108,99,255,0.2); color: #6c63ff; border: 1px solid #6c63ff; }
 
     /* === WAITING === */
     .waiting-anim { font-size: 4rem; animation: bounce 1.5s infinite; margin-bottom: 16px; }
@@ -59,48 +69,25 @@
     .my-name { font-size: 1.6rem; font-weight: 700; color: #4ecca3; margin-bottom: 6px; }
     .wait-msg { color: #888; margin-bottom: 20px; }
     .my-score-box {
-      background: #1a1a3e;
-      border-radius: 12px;
-      padding: 12px 32px;
-      text-align: center;
+      background: #1a1a3e; border-radius: 12px;
+      padding: 12px 32px; text-align: center;
     }
     .my-score-label { font-size: 0.8rem; color: #888; }
     .my-score-val { font-size: 2rem; font-weight: 700; color: #ffd700; }
 
-    /* === QUESTION === */
+    /* === QUESTION (rep) === */
     .q-header { font-size: 1rem; color: #888; margin-bottom: 6px; }
     .timer-wrap { width: 100%; height: 10px; background: #1a1a3e; border-radius: 5px; overflow: hidden; margin-bottom: 28px; }
     .timer-bar { height: 100%; border-radius: 5px; transition: width 0.3s linear, background 0.5s; }
-    .choices {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      width: 100%;
-    }
+    .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 100%; }
     .choice-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 16px;
-      height: 110px;
-      font-size: 2rem;
-      font-weight: 800;
-      border: none;
-      border-radius: 18px;
-      cursor: pointer;
-      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 16px; height: 110px; font-size: 2rem; font-weight: 800;
+      border: none; border-radius: 18px; cursor: pointer; color: #fff;
       transition: transform 0.1s, box-shadow 0.1s;
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
     }
-    .choice-btn::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0.15);
-      opacity: 0;
-      transition: opacity 0.1s;
-    }
+    .choice-btn::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.1s; }
     .choice-btn:active::after { opacity: 1; }
     .choice-btn:active { transform: scale(0.94); }
     .choice-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
@@ -110,20 +97,16 @@
     .choice-btn.C { background: #f5a623; }
     .choice-btn.D { background: #27c96a; }
 
-    /* === ANSWERED === */
+    /* === ANSWERED (rep) === */
     .answered-top { font-size: 3.5rem; margin-bottom: 10px; }
     .answered-label { color: #888; margin-bottom: 18px; font-size: 0.95rem; }
     .answered-badge {
-      padding: 18px 52px;
-      font-size: 2.2rem;
-      font-weight: 800;
-      border-radius: 18px;
-      color: #fff;
-      margin-bottom: 12px;
+      padding: 18px 52px; font-size: 2.2rem; font-weight: 800;
+      border-radius: 18px; color: #fff; margin-bottom: 12px;
     }
     .answered-time { color: #888; font-size: 0.9rem; margin-bottom: 20px; }
 
-    /* === RESULT === */
+    /* === RESULT (rep) === */
     .result-emoji { font-size: 4.5rem; margin-bottom: 8px; }
     .result-label { font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; }
     .result-label.correct { color: #27c96a; }
@@ -131,26 +114,75 @@
     .result-pts { font-size: 3.5rem; font-weight: 900; color: #ffd700; margin-bottom: 4px; }
     .result-total { color: #888; font-size: 0.95rem; }
 
-    /* === FINISHED === */
+    /* === FINISHED (rep) === */
     .fin-label { color: #888; font-size: 1rem; margin-bottom: 4px; }
     .fin-rank { font-size: 5rem; font-weight: 900; color: #ffd700; margin-bottom: 6px; }
     .fin-score { font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; }
     .fin-name { color: #888; font-size: 0.9rem; }
     .fin-msg { margin-top: 24px; color: #888; font-size: 0.9rem; text-align: center; }
+
+    /* === AUDIENCE PICK SCREEN === */
+    .pick-header { font-size: 1rem; color: #888; margin-bottom: 6px; text-align: center; }
+    .pick-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 16px; text-align: center; color: #6c63ff; }
+    .rep-list { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+    .rep-btn {
+      width: 100%; padding: 16px 20px;
+      font-size: 1.1rem; font-weight: 700;
+      background: #1a1a3e; border: 2px solid #2a2a4a;
+      border-radius: 14px; color: #fff; cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+      text-align: center;
+    }
+    .rep-btn:active { transform: scale(0.97); }
+    .rep-btn:hover { border-color: #6c63ff; background: #22224a; }
+    .rep-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+    .rep-btn.selected { border-color: #6c63ff; background: rgba(108,99,255,0.25); box-shadow: 0 0 0 2px #6c63ff; }
+
+    /* === AUDIENCE PICKED (waiting) === */
+    .picked-icon { font-size: 3.5rem; margin-bottom: 10px; }
+    .picked-label { color: #888; margin-bottom: 14px; font-size: 0.95rem; }
+    .picked-name-badge {
+      padding: 14px 40px; font-size: 1.6rem; font-weight: 800;
+      background: rgba(108,99,255,0.3); border: 2px solid #6c63ff;
+      border-radius: 18px; color: #fff; margin-bottom: 10px;
+    }
+
+    /* === AUDIENCE RESULT === */
+    .aud-result-msg { font-size: 1rem; color: #aaa; margin-bottom: 6px; }
+    .aud-correct-reps { font-size: 0.9rem; color: #4ecca3; margin-bottom: 16px; min-height: 1.2em; }
   </style>
 </head>
 <body>
 
-<!-- 1. JOIN -->
-<div id="s-join" class="screen active">
+<!-- 0. ROLE SELECTION -->
+<div id="s-role" class="screen active">
   <div class="logo">🎯</div>
-  <div class="title">クイズ参加</div>
-  <div class="subtitle">名前を入力してください</div>
-  <input class="input-name" id="name-input" type="text" placeholder="あなたの名前" maxlength="20" autocomplete="off">
-  <button class="btn-join" id="btn-join">参加する！</button>
+  <div class="title">クイズ大会</div>
+  <div class="subtitle">参加方法を選んでください</div>
+  <div class="role-btns">
+    <button class="btn-role rep" id="btn-role-rep">
+      <span class="role-icon">🏆</span>
+      代表者として参加
+      <span class="role-desc">ABCDで正解＆速さを競う</span>
+    </button>
+    <button class="btn-role aud" id="btn-role-aud">
+      <span class="role-icon">👥</span>
+      会場として参加
+      <span class="role-desc">正解する代表者を予測して当てる</span>
+    </button>
+  </div>
 </div>
 
-<!-- 2. WAITING -->
+<!-- 1. JOIN (rep) -->
+<div id="s-join" class="screen">
+  <div class="logo">🏆</div>
+  <div class="title">代表者参加</div>
+  <span class="role-tag rep" style="margin-bottom:20px">代表者</span>
+  <input class="input-name" id="rep-name-input" type="text" placeholder="あなたの名前" maxlength="20" autocomplete="off">
+  <button class="btn-join" id="btn-rep-join">参加する！</button>
+</div>
+
+<!-- 2. WAITING (rep) -->
 <div id="s-waiting" class="screen">
   <div class="waiting-anim">⏳</div>
   <div class="my-name" id="w-name"></div>
@@ -161,7 +193,7 @@
   </div>
 </div>
 
-<!-- 3. QUESTION -->
+<!-- 3. QUESTION (rep) -->
 <div id="s-question" class="screen">
   <div class="q-header" id="q-header">問題 1</div>
   <div class="timer-wrap"><div class="timer-bar" id="timer-bar" style="width:100%;background:#4ecca3"></div></div>
@@ -173,7 +205,7 @@
   </div>
 </div>
 
-<!-- 4. ANSWERED (waiting for reveal) -->
+<!-- 4. ANSWERED (rep) -->
 <div id="s-answered" class="screen">
   <div class="answered-top">✅</div>
   <div class="answered-label">回答完了！正解発表を待ってください</div>
@@ -185,7 +217,7 @@
   </div>
 </div>
 
-<!-- 5. RESULT -->
+<!-- 5. RESULT (rep) -->
 <div id="s-result" class="screen">
   <div class="result-emoji" id="r-emoji"></div>
   <div class="result-label" id="r-label"></div>
@@ -193,7 +225,7 @@
   <div class="result-total" id="r-total"></div>
 </div>
 
-<!-- 6. FINISHED -->
+<!-- 6. FINISHED (rep) -->
 <div id="s-finished" class="screen">
   <div class="fin-label">最終結果 あなたの順位</div>
   <div class="fin-rank" id="f-rank">-</div>
@@ -202,16 +234,76 @@
   <div class="fin-msg">スクリーンでランキングを確認しましょう！🎉</div>
 </div>
 
+<!-- A1. AUDIENCE JOIN -->
+<div id="s-aud-join" class="screen">
+  <div class="logo">👥</div>
+  <div class="title">会場参加</div>
+  <span class="role-tag aud" style="margin-bottom:20px">会場</span>
+  <input class="input-name" id="aud-name-input" type="text" placeholder="あなたの名前" maxlength="20" autocomplete="off">
+  <button class="btn-join" id="btn-aud-join">参加する！</button>
+</div>
+
+<!-- A2. AUDIENCE WAITING -->
+<div id="s-aud-waiting" class="screen">
+  <div class="waiting-anim">🔮</div>
+  <div class="my-name" id="aw-name"></div>
+  <div class="wait-msg">問題が始まったら代表者を予測！</div>
+  <div class="my-score-box">
+    <div class="my-score-label">現在の得点</div>
+    <div class="my-score-val" id="aw-score">0</div>
+  </div>
+</div>
+
+<!-- A3. AUDIENCE PICK -->
+<div id="s-aud-pick" class="screen">
+  <div class="pick-header" id="ap-header">問題 1</div>
+  <div class="pick-title">正解する代表者は誰だ！？</div>
+  <div class="timer-wrap"><div class="timer-bar" id="aud-timer-bar" style="width:100%;background:#6c63ff"></div></div>
+  <div class="rep-list" id="rep-list"></div>
+</div>
+
+<!-- A4. AUDIENCE PICKED (waiting) -->
+<div id="s-aud-picked" class="screen">
+  <div class="picked-icon">🔮</div>
+  <div class="picked-label">予測完了！正解発表を待ってください</div>
+  <div class="picked-name-badge" id="ap-badge">-</div>
+  <div class="answered-time" id="ap-time"></div>
+  <div class="my-score-box">
+    <div class="my-score-label">現在の得点</div>
+    <div class="my-score-val" id="ap-score">0</div>
+  </div>
+</div>
+
+<!-- A5. AUDIENCE RESULT -->
+<div id="s-aud-result" class="screen">
+  <div class="result-emoji" id="ar-emoji"></div>
+  <div class="result-label" id="ar-label"></div>
+  <div class="aud-correct-reps" id="ar-correct-reps"></div>
+  <div class="result-pts" id="ar-pts"></div>
+  <div class="result-total" id="ar-total"></div>
+</div>
+
+<!-- A6. AUDIENCE FINISHED -->
+<div id="s-aud-finished" class="screen">
+  <div class="fin-label">最終結果 あなたの順位</div>
+  <div class="fin-rank" id="af-rank">-</div>
+  <div class="fin-score" id="af-score"></div>
+  <div class="fin-name" id="af-name"></div>
+  <div class="fin-msg">スクリーンでランキングを確認しましょう！🎉</div>
+</div>
+
 <script src="/socket.io/socket.io.js"></script>
 <script>
   const COLORS = { A: '#e8394d', B: '#1a7cfa', C: '#f5a623', D: '#27c96a' };
   const socket = io();
 
+  let role = null; // 'rep' or 'aud'
   let myName = '';
   let myScore = 0;
-  let myLastChoice = null;
+  let myLastChoice = null;  // rep: ABCD, aud: rep name picked
   let timerRaf = null;
   let gameState = null;
+  let currentRepList = [];
 
   // ---- UI ----
 
@@ -220,19 +312,40 @@
     document.getElementById(id).classList.add('active');
   }
 
-  // ---- Join ----
+  // ---- Role selection ----
 
-  function join() {
-    const v = document.getElementById('name-input').value.trim();
+  document.getElementById('btn-role-rep').addEventListener('click', () => {
+    role = 'rep';
+    show('s-join');
+  });
+  document.getElementById('btn-role-aud').addEventListener('click', () => {
+    role = 'aud';
+    show('s-aud-join');
+  });
+
+  // ---- Rep join ----
+
+  function repJoin() {
+    const v = document.getElementById('rep-name-input').value.trim();
     if (!v) return;
-    document.getElementById('btn-join').disabled = true;
+    document.getElementById('btn-rep-join').disabled = true;
     socket.emit('player:join', v);
   }
+  document.getElementById('btn-rep-join').addEventListener('click', repJoin);
+  document.getElementById('rep-name-input').addEventListener('keydown', e => { if (e.key === 'Enter') repJoin(); });
 
-  document.getElementById('btn-join').addEventListener('click', join);
-  document.getElementById('name-input').addEventListener('keydown', e => { if (e.key === 'Enter') join(); });
+  // ---- Audience join ----
 
-  // ---- Choices ----
+  function audJoin() {
+    const v = document.getElementById('aud-name-input').value.trim();
+    if (!v) return;
+    document.getElementById('btn-aud-join').disabled = true;
+    socket.emit('audience:join', v);
+  }
+  document.getElementById('btn-aud-join').addEventListener('click', audJoin);
+  document.getElementById('aud-name-input').addEventListener('keydown', e => { if (e.key === 'Enter') audJoin(); });
+
+  // ---- Rep choices ----
 
   document.querySelectorAll('.choice-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -246,7 +359,28 @@
     });
   });
 
-  // ---- Socket events ----
+  // ---- Audience pick ----
+
+  function buildRepList(repList) {
+    currentRepList = repList;
+    const el = document.getElementById('rep-list');
+    el.innerHTML = repList.map(name =>
+      `<button class="rep-btn" data-rep="${name}">${name}</button>`
+    ).join('');
+    el.querySelectorAll('.rep-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (gameState?.phase !== 'question') return;
+        const rep = btn.dataset.rep;
+        el.querySelectorAll('.rep-btn').forEach(b => {
+          b.disabled = true;
+          if (b.dataset.rep === rep) b.classList.add('selected');
+        });
+        socket.emit('audience:pick', rep);
+      });
+    });
+  }
+
+  // ---- Socket events: REP ----
 
   socket.on('player:joined', ({ name, state }) => {
     myName = name;
@@ -255,19 +389,8 @@
     if (state.phase === 'lobby' || state.phase === 'revealed') {
       show('s-waiting');
     } else if (state.phase === 'question') {
-      startQuestion(state);
+      startRepQuestion(state);
     } else if (state.phase === 'finished') {
-      show('s-waiting');
-    }
-  });
-
-  socket.on('game:state', (state) => {
-    gameState = state;
-    if (state.phase === 'question') {
-      startQuestion(state);
-    } else if (state.phase === 'lobby') {
-      myScore = 0;
-      document.getElementById('w-score').textContent = '0';
       show('s-waiting');
     }
   });
@@ -283,58 +406,160 @@
     show('s-answered');
   });
 
-  socket.on('game:revealed', ({ correctAnswer, ranking }) => {
-    cancelAnimationFrame(timerRaf);
-    const me = ranking.find(p => p.name === myName);
-    if (me) myScore = me.score;
-    const lastAns = me?.answers[me.answers.length - 1];
-    const isCorrect = lastAns?.correct ?? false;
-    const pts = lastAns?.pts ?? 0;
+  // ---- Socket events: AUDIENCE ----
 
-    document.getElementById('r-emoji').textContent = isCorrect ? '🎉' : '😢';
-    const label = document.getElementById('r-label');
-    label.textContent = isCorrect ? '正解！' : '不正解…';
-    label.className = 'result-label ' + (isCorrect ? 'correct' : 'wrong');
-    document.getElementById('r-pts').textContent = isCorrect ? `+${pts.toLocaleString()} pt` : '+0 pt';
-    document.getElementById('r-total').textContent = `合計: ${myScore.toLocaleString()} pt`;
-    show('s-result');
-
-    setTimeout(() => {
-      document.getElementById('w-score').textContent = myScore.toLocaleString();
-      document.getElementById('w-name').textContent = myName;
-      if (gameState?.phase !== 'finished') show('s-waiting');
-    }, 3500);
+  socket.on('audience:joined', ({ name, state, repList }) => {
+    myName = name;
+    gameState = state;
+    document.getElementById('aw-name').textContent = name;
+    buildRepList(repList);
+    if (state.phase === 'lobby' || state.phase === 'revealed') {
+      show('s-aud-waiting');
+    } else if (state.phase === 'question') {
+      startAudQuestion(state);
+    } else if (state.phase === 'finished') {
+      show('s-aud-waiting');
+    }
   });
 
-  socket.on('game:finished', (ranking) => {
-    gameState = { ...gameState, phase: 'finished' };
-    const idx = ranking.findIndex(p => p.name === myName);
-    const me = ranking[idx];
-    if (me) myScore = me.score;
+  socket.on('rep:list', (repList) => {
+    buildRepList(repList);
+  });
 
-    const medals = ['🥇', '🥈', '🥉'];
-    document.getElementById('f-rank').textContent = idx < 3 ? medals[idx] : `${idx + 1} 位`;
-    document.getElementById('f-score').textContent = `${myScore.toLocaleString()} pt`;
-    document.getElementById('f-name').textContent = myName;
-    show('s-finished');
+  socket.on('audience:pick_ok', ({ pick, time }) => {
+    myLastChoice = pick;
+    document.getElementById('ap-badge').textContent = pick;
+    document.getElementById('ap-time').textContent = `予測速度: ${(time / 1000).toFixed(2)} 秒`;
+    document.getElementById('ap-score').textContent = myScore.toLocaleString();
+    cancelAnimationFrame(timerRaf);
+    show('s-aud-picked');
+  });
+
+  // ---- Socket events: SHARED ----
+
+  socket.on('game:state', (state) => {
+    gameState = state;
+    if (state.phase === 'question') {
+      if (role === 'rep') startRepQuestion(state);
+      else if (role === 'aud') startAudQuestion(state);
+    } else if (state.phase === 'lobby') {
+      myScore = 0;
+      myLastChoice = null;
+      if (role === 'rep') {
+        document.getElementById('w-score').textContent = '0';
+        show('s-waiting');
+      } else if (role === 'aud') {
+        document.getElementById('aw-score').textContent = '0';
+        show('s-aud-waiting');
+      }
+    }
+  });
+
+  socket.on('game:revealed', ({ correctAnswer, ranking, correctReps, audienceRanking }) => {
+    cancelAnimationFrame(timerRaf);
+
+    if (role === 'rep') {
+      const me = ranking.find(p => p.name === myName);
+      if (me) myScore = me.score;
+      const isCorrect = myLastChoice !== null && myLastChoice === correctAnswer;
+      const currentAns = me?.answers?.find(a => a.q === gameState?.questionNumber);
+      const pts = currentAns?.pts ?? 0;
+
+      document.getElementById('r-emoji').textContent = isCorrect ? '🎉' : '😢';
+      const label = document.getElementById('r-label');
+      label.textContent = isCorrect ? '正解！' : '不正解…';
+      label.className = 'result-label ' + (isCorrect ? 'correct' : 'wrong');
+      document.getElementById('r-pts').textContent = isCorrect ? `+${pts.toLocaleString()} pt` : '+0 pt';
+      document.getElementById('r-total').textContent = `合計: ${myScore.toLocaleString()} pt`;
+      show('s-result');
+
+      setTimeout(() => {
+        document.getElementById('w-score').textContent = myScore.toLocaleString();
+        document.getElementById('w-name').textContent = myName;
+        if (gameState?.phase !== 'finished') show('s-waiting');
+      }, 3500);
+
+    } else if (role === 'aud') {
+      const me = audienceRanking.find(a => a.name === myName);
+      if (me) myScore = me.score;
+      const isCorrect = myLastChoice !== null && correctReps.includes(myLastChoice);
+      const currentAns = me?.answers?.find(a => a.q === gameState?.questionNumber);
+      const pts = currentAns?.pts ?? 0;
+
+      document.getElementById('ar-emoji').textContent = isCorrect ? '🎯' : myLastChoice ? '😢' : '⏰';
+      const label = document.getElementById('ar-label');
+      if (!myLastChoice) {
+        label.textContent = '時間切れ…';
+        label.className = 'result-label wrong';
+      } else {
+        label.textContent = isCorrect ? '的中！' : '外れ…';
+        label.className = 'result-label ' + (isCorrect ? 'correct' : 'wrong');
+      }
+      const correctRepsText = correctReps.length > 0
+        ? `✅ 正解者：${correctReps.join('、')}`
+        : '❌ 正解者なし';
+      document.getElementById('ar-correct-reps').textContent = correctRepsText;
+      document.getElementById('ar-pts').textContent = isCorrect ? `+${pts.toLocaleString()} pt` : '+0 pt';
+      document.getElementById('ar-total').textContent = `合計: ${myScore.toLocaleString()} pt`;
+      show('s-aud-result');
+
+      setTimeout(() => {
+        document.getElementById('aw-score').textContent = myScore.toLocaleString();
+        document.getElementById('aw-name').textContent = myName;
+        myLastChoice = null;
+        if (gameState?.phase !== 'finished') show('s-aud-waiting');
+      }, 3500);
+    }
+  });
+
+  socket.on('game:finished', ({ repRanking, audienceRanking }) => {
+    gameState = { ...gameState, phase: 'finished' };
+    const MEDALS = ['🥇', '🥈', '🥉'];
+
+    if (role === 'rep') {
+      const idx = repRanking.findIndex(p => p.name === myName);
+      const me = repRanking[idx];
+      if (me) myScore = me.score;
+      document.getElementById('f-rank').textContent = idx < 3 ? MEDALS[idx] : `${idx + 1} 位`;
+      document.getElementById('f-score').textContent = `${myScore.toLocaleString()} pt`;
+      document.getElementById('f-name').textContent = myName;
+      show('s-finished');
+    } else if (role === 'aud') {
+      const idx = audienceRanking.findIndex(a => a.name === myName);
+      const me = audienceRanking[idx];
+      if (me) myScore = me.score;
+      document.getElementById('af-rank').textContent = idx < 3 ? MEDALS[idx] : `${idx + 1} 位`;
+      document.getElementById('af-score').textContent = `${myScore.toLocaleString()} pt`;
+      document.getElementById('af-name').textContent = myName;
+      show('s-aud-finished');
+    }
   });
 
   // ---- Timer ----
 
-  function startQuestion(state) {
+  function startRepQuestion(state) {
     document.getElementById('q-header').textContent = state.isTest ? '🔧 動作テスト' : `問題 ${state.questionNumber}`;
     document.querySelectorAll('.choice-btn').forEach(b => {
       b.disabled = false;
       b.classList.remove('selected');
     });
     myLastChoice = null;
-    animateTimer(state);
+    animateTimer(state, 'timer-bar');
     show('s-question');
   }
 
-  function animateTimer(state) {
+  function startAudQuestion(state) {
+    document.getElementById('ap-header').textContent = state.isTest ? '🔧 動作テスト' : `問題 ${state.questionNumber}`;
+    // Re-render rep list (enable buttons)
+    buildRepList(currentRepList);
+    myLastChoice = null;
+    animateTimer(state, 'aud-timer-bar');
+    show('s-aud-pick');
+  }
+
+  function animateTimer(state, barId) {
     cancelAnimationFrame(timerRaf);
-    const bar = document.getElementById('timer-bar');
+    const bar = document.getElementById(barId);
     const endTime = state.questionStartTime + state.questionDuration * 1000;
 
     function tick() {

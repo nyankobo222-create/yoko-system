@@ -31,7 +31,7 @@
 
     /* ===== QUESTION ===== */
     #v-question { gap: 0; }
-    .q-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .q-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     .q-num { font-size: 2.2rem; font-weight: 900; }
     .q-responded { font-size: 1.1rem; color: #888; }
     .q-timer {
@@ -40,46 +40,58 @@
     }
     .test-banner {
       display: none; background: linear-gradient(135deg, #7c4dff, #4ecca3);
-      border-radius: 14px; padding: 16px 28px; margin-bottom: 16px; text-align: center;
+      border-radius: 14px; padding: 16px 28px; margin-bottom: 10px; text-align: center;
     }
     .test-banner.visible { display: block; }
     .test-banner-title { font-size: 1.4rem; font-weight: 900; margin-bottom: 4px; }
     .test-banner-desc { font-size: 1rem; opacity: 0.9; }
-    .progress-outer { width: 100%; height: 8px; background: #1a1a3e; border-radius: 4px; margin-bottom: 20px; overflow: hidden; }
+
+    /* 問題文 */
+    .q-text-display {
+      font-size: 2rem; font-weight: 800; text-align: center;
+      padding: 4px 0 12px; color: #fff; line-height: 1.3;
+      word-break: break-word;
+    }
+
+    .progress-outer { width: 100%; height: 8px; background: #1a1a3e; border-radius: 4px; margin-bottom: 16px; overflow: hidden; }
     .progress-inner { height: 100%; border-radius: 4px; transition: width 0.3s linear, background 0.5s; }
-    .q-body { flex: 1; display: flex; gap: 32px; }
-    .bars { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 18px; }
-    .bar-row { display: flex; align-items: center; gap: 18px; height: 80px; }
+    .q-body { flex: 1; display: flex; gap: 32px; min-height: 0; }
+    .bars { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 14px; }
+    .bar-row { display: flex; align-items: center; gap: 14px; height: 72px; }
     .bar-lbl {
-      width: 64px; height: 64px; border-radius: 14px;
+      width: 60px; height: 60px; border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 2rem; font-weight: 900; flex-shrink: 0;
+      font-size: 1.8rem; font-weight: 900; flex-shrink: 0;
     }
     .bar-lbl.A { background: #e8394d; }
     .bar-lbl.B { background: #1a7cfa; }
     .bar-lbl.C { background: #f5a623; }
     .bar-lbl.D { background: #27c96a; }
-    .bar-track { flex: 1; height: 64px; background: #14143a; border-radius: 12px; overflow: hidden; position: relative; }
-    .bar-fill { height: 100%; border-radius: 12px; transition: width 0.5s cubic-bezier(0.4,0,0.2,1); min-width: 0; }
+
+    /* 選択肢テキスト列（choices があるときだけ表示） */
+    .bar-choice-text {
+      display: none; width: 0; flex-shrink: 0;
+      font-size: 1.05rem; color: #ddd; font-weight: 600;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .bars.has-choices .bar-choice-text {
+      display: block; width: 200px;
+    }
+
+    .bar-track { flex: 1; height: 60px; background: #14143a; border-radius: 10px; overflow: hidden; position: relative; }
+    .bar-fill { height: 100%; border-radius: 10px; transition: width 0.5s cubic-bezier(0.4,0,0.2,1); min-width: 0; }
     .bar-fill.A { background: linear-gradient(90deg, #c0263a, #e8394d); }
     .bar-fill.B { background: linear-gradient(90deg, #1260d4, #1a7cfa); }
     .bar-fill.C { background: linear-gradient(90deg, #c87d10, #f5a623); }
     .bar-fill.D { background: linear-gradient(90deg, #1d9e52, #27c96a); }
-    .bar-count { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); font-size: 1.6rem; font-weight: 700; }
+    .bar-count { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-size: 1.5rem; font-weight: 700; }
 
-    /* Audience pick panel during question */
-    .aud-panel {
-      width: 280px; flex-shrink: 0;
-      display: flex; flex-direction: column; gap: 0;
-    }
+    /* Audience pick panel */
+    .aud-panel { width: 260px; flex-shrink: 0; display: flex; flex-direction: column; gap: 0; }
     .aud-panel-title { font-size: 0.88rem; color: #666; margin-bottom: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
     .aud-responded { font-size: 0.9rem; color: #888; margin-bottom: 12px; }
     .aud-pick-list { flex: 1; display: flex; flex-direction: column; gap: 6px; overflow: hidden; }
-    .aud-pick-row {
-      display: flex; align-items: center; gap: 10px;
-      background: #14143a; border-radius: 10px; padding: 8px 14px;
-      font-size: 0.95rem;
-    }
+    .aud-pick-row { display: flex; align-items: center; gap: 10px; background: #14143a; border-radius: 10px; padding: 8px 14px; font-size: 0.95rem; }
     .aud-pick-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .aud-pick-count { color: #6c63ff; font-weight: 700; font-size: 1rem; }
     .aud-pick-bar-wrap { width: 60px; height: 6px; background: #0a0a1a; border-radius: 3px; overflow: hidden; }
@@ -87,19 +99,19 @@
 
     /* ===== REVEALED ===== */
     #v-revealed { gap: 0; }
+    .rv-q-text {
+      font-size: 1.2rem; font-weight: 600; color: #bbb;
+      text-align: center; padding-bottom: 8px; word-break: break-word;
+    }
     .correct-banner {
       text-align: center; font-size: 2.4rem; font-weight: 900;
-      padding: 18px; border-radius: 18px; margin-bottom: 20px; color: #000;
+      padding: 16px; border-radius: 18px; margin-bottom: 16px; color: #000;
     }
     .revealed-body { display: flex; gap: 32px; flex: 1; min-height: 0; }
-    .revealed-bars { flex: 1.2; display: flex; flex-direction: column; justify-content: center; gap: 14px; }
-    .revealed-ranking { flex: 1; display: flex; flex-direction: column; }
-    .rv-rank-title { font-size: 0.9rem; color: #888; margin-bottom: 10px; }
-    .rv-rank-row {
-      display: flex; align-items: center; gap: 14px;
-      padding: 8px 14px; border-radius: 12px; margin-bottom: 6px;
-      font-size: 1.05rem; background: #14143a;
-    }
+    .revealed-bars { flex: 1.2; display: flex; flex-direction: column; justify-content: center; gap: 12px; }
+    .revealed-ranking { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .rv-rank-title { font-size: 0.88rem; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+    .rv-rank-row { display: flex; align-items: center; gap: 14px; padding: 8px 14px; border-radius: 12px; margin-bottom: 6px; font-size: 1.05rem; background: #14143a; }
     .rv-rank-row.top1 { background: rgba(255,215,0,0.15); border: 1px solid #ffd700; }
     .rv-rank-row.top2 { background: rgba(192,192,192,0.12); border: 1px solid #c0c0c0; }
     .rv-rank-row.top3 { background: rgba(205,127,50,0.12); border: 1px solid #cd7f32; }
@@ -108,9 +120,20 @@
     .rv-score { font-weight: 700; color: #ffd700; }
     .bar-correct-mark { font-size: 1.8rem; flex-shrink: 0; width: 36px; text-align: center; }
 
+    /* Speed ranking */
+    .speed-list { display: flex; flex-direction: column; gap: 7px; flex: 1; overflow: hidden; }
+    .speed-row { display: flex; align-items: center; gap: 12px; padding: 9px 16px; border-radius: 12px; background: #14143a; }
+    .speed-row.top1 { background: rgba(255,215,0,0.15); border: 1px solid #ffd700; }
+    .speed-row.top2 { background: rgba(192,192,192,0.12); border: 1px solid #c0c0c0; }
+    .speed-row.top3 { background: rgba(205,127,50,0.12); border: 1px solid #cd7f32; }
+    .speed-rank { font-size: 1.2rem; min-width: 40px; }
+    .speed-name { flex: 1; font-size: 1.1rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .speed-time { color: #4ecca3; font-weight: 700; font-size: 1.1rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .speed-none { color: #555; padding: 20px; text-align: center; font-size: 1rem; }
+
     /* Audience result strip */
     .aud-result-strip {
-      margin-top: 14px;
+      margin-top: 12px;
       background: rgba(108,99,255,0.1); border: 1px solid rgba(108,99,255,0.3);
       border-radius: 14px; padding: 14px 20px;
       display: flex; align-items: center; gap: 24px;
@@ -119,26 +142,94 @@
     .aud-res-hit span { font-size: 1.6rem; color: #fff; }
     .aud-res-correct { font-size: 0.95rem; color: #4ecca3; }
     .aud-res-top { display: flex; gap: 12px; margin-left: auto; }
-    .aud-res-chip {
-      background: #14143a; border-radius: 20px;
-      padding: 6px 14px; font-size: 0.88rem;
-    }
+    .aud-res-chip { background: #14143a; border-radius: 20px; padding: 6px 14px; font-size: 0.88rem; }
     .aud-res-chip .medal { margin-right: 4px; }
+
+    /* ===== RANKING REVEAL ===== */
+    #v-reveal {
+      background: radial-gradient(ellipse at 50% 110%, #2a1500 0%, #0a0a1a 55%);
+      padding: 36px 56px; gap: 0;
+    }
+    .rv-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px; flex-shrink: 0;
+    }
+    .rv-header-title { font-size: 2.2rem; font-weight: 900; }
+    .rv-header-count { font-size: 1.1rem; color: #888; }
+    .rv-list {
+      flex: 1; display: flex; flex-direction: column; justify-content: flex-end;
+      gap: 9px; overflow: hidden;
+    }
+    .rv-card {
+      display: flex; align-items: center; gap: 24px;
+      padding: 13px 24px; border-radius: 14px;
+      background: #14143a; border: 1px solid #2a2a4a;
+      animation: rv-enter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+      flex-shrink: 0;
+    }
+    .rv-card.top1 { background: rgba(255,215,0,0.18); border-color: #ffd700; }
+    .rv-card.top2 { background: rgba(192,192,192,0.12); border-color: #c0c0c0; }
+    .rv-card.top3 { background: rgba(205,127,50,0.12); border-color: #cd7f32; }
+    .rv-rank-lbl { font-size: 1.5rem; font-weight: 900; min-width: 90px; }
+    .rv-name { flex: 1; font-size: 1.5rem; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .rv-score { font-size: 1.4rem; font-weight: 900; color: #ffd700; }
+    @keyframes rv-enter {
+      from { opacity: 0; transform: translateY(-60px) scale(0.92); }
+      to   { opacity: 1; transform: translateY(0)    scale(1); }
+    }
+
+    /* ===== RULES ===== */
+    #v-rules {
+      align-items: center; justify-content: flex-start;
+      background: radial-gradient(ellipse at 50% 0%, #1a1a4a 0%, #0a0a1a 70%);
+      gap: 0; overflow-y: auto;
+    }
+    .rules-title {
+      font-size: 2.6rem; font-weight: 900; margin-bottom: 28px;
+      letter-spacing: 0.04em; text-align: center; flex-shrink: 0;
+    }
+    .rules-body {
+      font-size: 1.25rem; line-height: 1.85; white-space: pre-wrap;
+      color: #ddd; max-width: 860px; width: 100%;
+      background: rgba(255,255,255,0.04); border-radius: 20px;
+      padding: 28px 44px; margin-bottom: 40px;
+    }
+    .rules-body strong { color: #4ecca3; font-weight: 800; }
+
+    /* ===== PREVIEW ===== */
+    #v-preview {
+      background: radial-gradient(ellipse at 50% 110%, #1a0a3a 0%, #0a0a1a 55%);
+      align-items: center; justify-content: center; gap: 0;
+    }
+    .preview-qnum { font-size: 2rem; font-weight: 900; color: #666; margin-bottom: 32px; letter-spacing: 0.05em; }
+    .preview-thinking-emoji { font-size: 9rem; margin-bottom: 28px; animation: bounce 1.8s ease-in-out infinite; }
+    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-18px)} }
+    .preview-thinking-label { font-size: 3rem; font-weight: 900; color: #6c63ff; margin-bottom: 24px; letter-spacing: 0.04em; }
+    .preview-aud-status { font-size: 1.6rem; color: #888; font-variant-numeric: tabular-nums; }
+
+    /* ===== COUNTDOWN OVERLAY ===== */
+    #countdown-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.88);
+      display: none; align-items: center; justify-content: center;
+      z-index: 999; flex-direction: column;
+    }
+    .countdown-num {
+      font-size: 28vw; font-weight: 900; color: #fff;
+      line-height: 1; text-shadow: 0 0 80px rgba(78,204,163,0.7);
+    }
+    @keyframes cd-pulse {
+      from { opacity: 0; transform: scale(1.6); }
+      to   { opacity: 1; transform: scale(1); }
+    }
 
     /* ===== FINISHED ===== */
     #v-finished { align-items: stretch; justify-content: center; gap: 0; padding: 40px 56px; }
     .fin-title { font-size: 2.6rem; font-weight: 900; margin-bottom: 24px; text-align: center; }
     .fin-columns { display: flex; gap: 40px; flex: 1; min-height: 0; }
     .fin-col { flex: 1; display: flex; flex-direction: column; }
-    .fin-col-title {
-      font-size: 1rem; color: #888; font-weight: 700;
-      letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 14px;
-      padding-bottom: 8px; border-bottom: 1px solid #1e1e3a;
-    }
-    .fin-row {
-      display: flex; align-items: center; gap: 14px;
-      padding: 10px 18px; border-radius: 12px; margin-bottom: 8px; font-size: 1.2rem;
-    }
+    .fin-col-title { font-size: 1rem; color: #888; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid #1e1e3a; }
+    .fin-row { display: flex; align-items: center; gap: 14px; padding: 10px 18px; border-radius: 12px; margin-bottom: 8px; font-size: 1.2rem; }
     .fin-row.r1 { background: rgba(255,215,0,0.2); border: 2px solid #ffd700; font-size: 1.4rem; }
     .fin-row.r2 { background: rgba(192,192,192,0.15); border: 1px solid #c0c0c0; font-size: 1.3rem; }
     .fin-row.r3 { background: rgba(205,127,50,0.15); border: 1px solid #cd7f32; }
@@ -149,6 +240,29 @@
   </style>
 </head>
 <body>
+
+<!-- PREVIEW (audience predicting) -->
+<div id="v-preview" class="view">
+  <div class="preview-qnum" id="preview-qnum">問題 1</div>
+  <div class="preview-thinking-emoji">🔮</div>
+  <div class="preview-thinking-label">会場参加者が予測中...</div>
+  <div class="preview-aud-status" id="preview-aud-status">0 / 0 人予測済み</div>
+</div>
+
+<!-- RANKING REVEAL -->
+<div id="v-reveal" class="view">
+  <div class="rv-header">
+    <div class="rv-header-title">🏆 中間ランキング発表！</div>
+    <div class="rv-header-count" id="rv-count"></div>
+  </div>
+  <div class="rv-list" id="rv-list"></div>
+</div>
+
+<!-- RULES -->
+<div id="v-rules" class="view">
+  <div class="rules-title">📋 ゲームのルール</div>
+  <div class="rules-body" id="rules-body"></div>
+</div>
 
 <!-- LOBBY -->
 <div id="v-lobby" class="view active">
@@ -170,13 +284,14 @@
     <div class="q-responded" id="q-responded">0 / 0 人回答</div>
     <div class="q-timer" id="q-timer">30</div>
   </div>
+  <div id="q-text-display" class="q-text-display" style="display:none"></div>
   <div class="progress-outer"><div class="progress-inner" id="prog-bar" style="width:100%"></div></div>
   <div class="q-body">
     <div class="bars" id="bars-live">
-      <div class="bar-row"><div class="bar-lbl A">A</div><div class="bar-track"><div class="bar-fill A" id="bf-A" style="width:0%"></div><span class="bar-count" id="bc-A">0</span></div></div>
-      <div class="bar-row"><div class="bar-lbl B">B</div><div class="bar-track"><div class="bar-fill B" id="bf-B" style="width:0%"></div><span class="bar-count" id="bc-B">0</span></div></div>
-      <div class="bar-row"><div class="bar-lbl C">C</div><div class="bar-track"><div class="bar-fill C" id="bf-C" style="width:0%"></div><span class="bar-count" id="bc-C">0</span></div></div>
-      <div class="bar-row"><div class="bar-lbl D">D</div><div class="bar-track"><div class="bar-fill D" id="bf-D" style="width:0%"></div><span class="bar-count" id="bc-D">0</span></div></div>
+      <div class="bar-row"><div class="bar-lbl A">A</div><div class="bar-choice-text" id="bt-A"></div><div class="bar-track"><div class="bar-fill A" id="bf-A" style="width:0%"></div><span class="bar-count" id="bc-A">0</span></div></div>
+      <div class="bar-row"><div class="bar-lbl B">B</div><div class="bar-choice-text" id="bt-B"></div><div class="bar-track"><div class="bar-fill B" id="bf-B" style="width:0%"></div><span class="bar-count" id="bc-B">0</span></div></div>
+      <div class="bar-row"><div class="bar-lbl C">C</div><div class="bar-choice-text" id="bt-C"></div><div class="bar-track"><div class="bar-fill C" id="bf-C" style="width:0%"></div><span class="bar-count" id="bc-C">0</span></div></div>
+      <div class="bar-row"><div class="bar-lbl D">D</div><div class="bar-choice-text" id="bt-D"></div><div class="bar-track"><div class="bar-fill D" id="bf-D" style="width:0%"></div><span class="bar-count" id="bc-D">0</span></div></div>
     </div>
     <!-- Audience pick panel -->
     <div class="aud-panel">
@@ -189,12 +304,13 @@
 
 <!-- REVEALED -->
 <div id="v-revealed" class="view">
+  <div id="rv-q-text" class="rv-q-text" style="display:none"></div>
   <div class="correct-banner" id="correct-banner">✓ 正解は A ！</div>
   <div class="revealed-body">
     <div class="revealed-bars" id="rv-bars"></div>
     <div class="revealed-ranking">
-      <div class="rv-rank-title">📊 代表者ランキング</div>
-      <div id="rv-ranking"></div>
+      <div class="rv-rank-title">⚡ 正解者・回答スピード</div>
+      <div class="speed-list" id="rv-speed-list"></div>
     </div>
   </div>
   <div class="aud-result-strip" id="aud-result-strip" style="display:none">
@@ -219,6 +335,11 @@
   </div>
 </div>
 
+<!-- COUNTDOWN OVERLAY -->
+<div id="countdown-overlay">
+  <div class="countdown-num" id="countdown-num">3</div>
+</div>
+
 <script src="/socket.io/socket.io.js"></script>
 <script>
   const COLORS = { A: '#e8394d', B: '#1a7cfa', C: '#f5a623', D: '#27c96a' };
@@ -226,6 +347,9 @@
   const socket = io();
   let timerRaf = null;
   let playerCount = 0;
+  let screenState = { choices: {} };
+  let rulesVisible = false;
+  let rvTotal = 0;
 
   const joinUrl = window.location.origin + '/';
   document.getElementById('lobby-url').textContent = joinUrl;
@@ -245,13 +369,112 @@
     document.getElementById('lobby-count').textContent = count;
   });
 
+  socket.on('ranking:start', ({ total, group, label }) => {
+    rvTotal = total;
+    rulesVisible = false;
+    const who = group === 'audience' ? '会場参加者' : '代表者';
+    const prefix = label ? label + ' ' : '';
+    document.getElementById('rv-header-title').textContent = `🏆 ${prefix}${who}ランキング発表！`;
+    document.getElementById('rv-list').innerHTML = '';
+    document.getElementById('rv-count').textContent = `0 / ${total} 人`;
+    showView('v-reveal');
+  });
+
+  socket.on('ranking:show_player', ({ player, rank, total }) => {
+    const list = document.getElementById('rv-list');
+    const card = document.createElement('div');
+    const medals = { 1: '🥇 1位', 2: '🥈 2位', 3: '🥉 3位' };
+    const topCls = rank <= 3 ? ` top${rank}` : '';
+    card.className = `rv-card${topCls}`;
+    card.innerHTML = `
+      <div class="rv-rank-lbl">${medals[rank] || rank + '位'}</div>
+      <div class="rv-name">${player.name}</div>
+      <div class="rv-score">${player.score.toLocaleString()} pt</div>
+    `;
+    list.insertBefore(card, list.firstChild);
+    const revealed = total - rank + 1;
+    document.getElementById('rv-count').textContent = `${revealed} / ${total} 人`;
+  });
+
+  socket.on('ranking:end', () => {
+    showViewForPhase(screenState);
+  });
+
+  socket.on('screen:rules', ({ show, text }) => {
+    rulesVisible = show;
+    if (show) {
+      // 【...】を太字風に色付け
+      document.getElementById('rules-body').innerHTML =
+        text.replace(/【([^】]+)】/g, '<strong>【$1】</strong>');
+      showView('v-rules');
+    } else {
+      showViewForPhase(screenState);
+    }
+  });
+
+  function showViewForPhase(state) {
+    if (state.phase === 'lobby' || !state.phase) showView('v-lobby');
+    else if (state.phase === 'preview') showView('v-preview');
+    else if (state.phase === 'question') showView('v-question');
+    else if (state.phase === 'revealed') showView('v-revealed');
+    else if (state.phase === 'finished') showView('v-finished');
+  }
+
+  socket.on('game:countdown', () => {
+    const overlay = document.getElementById('countdown-overlay');
+    const numEl = document.getElementById('countdown-num');
+    overlay.style.display = 'flex';
+    let n = 3;
+    numEl.style.animation = 'none';
+    numEl.textContent = n;
+    void numEl.offsetWidth;
+    numEl.style.animation = 'cd-pulse 0.9s ease-out';
+
+    const tick = setInterval(() => {
+      n--;
+      if (n <= 0) {
+        clearInterval(tick);
+        overlay.style.display = 'none';
+      } else {
+        numEl.style.animation = 'none';
+        numEl.textContent = n;
+        void numEl.offsetWidth;
+        numEl.style.animation = 'cd-pulse 0.9s ease-out';
+      }
+    }, 1000);
+  });
+
   socket.on('game:state', state => {
+    screenState = state;
+    if (rulesVisible) return; // ルール表示中はゲーム状態変化を無視
     if (state.phase === 'lobby') {
       showView('v-lobby');
       cancelAnimationFrame(timerRaf);
+    } else if (state.phase === 'preview') {
+      document.getElementById('preview-qnum').textContent = `問題 ${state.questionNumber}`;
+      document.getElementById('preview-aud-status').textContent = '0 / 0 人予測済み';
+      showView('v-preview');
     } else if (state.phase === 'question') {
       document.getElementById('q-num').textContent = state.isTest ? '動作テスト' : `問題 ${state.questionNumber}`;
       document.getElementById('test-banner').classList.toggle('visible', !!state.isTest);
+
+      // 問題文
+      const qtEl = document.getElementById('q-text-display');
+      if (state.questionText) {
+        qtEl.textContent = state.questionText;
+        qtEl.style.display = 'block';
+      } else {
+        qtEl.style.display = 'none';
+      }
+
+      // 選択肢テキスト
+      const barsEl = document.getElementById('bars-live');
+      const hasChoices = state.choices && Object.values(state.choices).some(v => v);
+      barsEl.classList.toggle('has-choices', hasChoices);
+      ['A','B','C','D'].forEach(c => {
+        document.getElementById('bt-' + c).textContent = state.choices?.[c] || '';
+      });
+
       resetBars();
       resetAudPanel();
       startTimer(state);
@@ -268,25 +491,39 @@
 
   socket.on('audience:pick_stats', stats => {
     updateAudPanel(stats);
+    const previewStatus = document.getElementById('preview-aud-status');
+    if (previewStatus) previewStatus.textContent = `${stats.total} / ${stats.audienceCount} 人予測済み`;
   });
 
-  socket.on('game:revealed', ({ correctAnswer, stats, ranking, correctReps, audienceRanking, audiencePickStats }) => {
+  socket.on('game:revealed', ({ correctAnswer, stats, ranking, correctReps, correctRespondents, audienceRanking, audiencePickStats }) => {
     cancelAnimationFrame(timerRaf);
+
+    // 問題文（正解発表画面にも表示）
+    const rvQText = document.getElementById('rv-q-text');
+    if (screenState.questionText) {
+      rvQText.textContent = screenState.questionText;
+      rvQText.style.display = 'block';
+    } else {
+      rvQText.style.display = 'none';
+    }
 
     const banner = document.getElementById('correct-banner');
     banner.textContent = `✓ 正解は ${correctAnswer} ！`;
     banner.style.background = COLORS[correctAnswer];
 
-    // Rep bars
+    // 選択肢テキスト付きバー
     const barsEl = document.getElementById('rv-bars');
     const max = Math.max(1, ...Object.values(stats.counts));
     barsEl.innerHTML = ['A', 'B', 'C', 'D'].map(c => {
       const cnt = stats.counts[c];
       const pct = stats.total > 0 ? Math.round((cnt / stats.total) * 100) : 0;
       const isOk = c === correctAnswer;
+      const choiceText = screenState.choices?.[c] || '';
+      const fade = isOk ? '' : 'opacity:0.45';
       return `
         <div class="bar-row">
-          <div class="bar-lbl ${c}" style="${isOk ? '' : 'opacity:0.45'}">${c}</div>
+          <div class="bar-lbl ${c}" style="${fade}">${c}</div>
+          ${choiceText ? `<div class="bar-choice-text" style="display:block;width:180px;${fade}">${choiceText}</div>` : ''}
           <div class="bar-track">
             <div class="bar-fill ${c}" style="width:${(cnt/max)*100}%;opacity:${isOk?1:0.45}"></div>
             <span class="bar-count">${cnt}人 (${pct}%)</span>
@@ -295,16 +532,20 @@
         </div>`;
     }).join('');
 
-    // Rep ranking top 6
-    const rvEl = document.getElementById('rv-ranking');
+    // 正解者スピードランキング
+    const speedEl = document.getElementById('rv-speed-list');
     const clsMap = ['top1','top2','top3'];
-    rvEl.innerHTML = ranking.slice(0, 6).map((p, i) =>
-      `<div class="rv-rank-row ${clsMap[i]||''}">
-        <div class="rv-pos">${MEDALS[i] || (i+1)}</div>
-        <div class="rv-name">${p.name}</div>
-        <div class="rv-score">${p.score.toLocaleString()} pt</div>
-      </div>`
-    ).join('');
+    if (correctRespondents && correctRespondents.length > 0) {
+      speedEl.innerHTML = correctRespondents.slice(0, 7).map((r, i) =>
+        `<div class="speed-row ${clsMap[i] || ''}">
+          <div class="speed-rank">${MEDALS[i] || (i + 1) + '位'}</div>
+          <div class="speed-name">${r.name}</div>
+          <div class="speed-time">${(r.time / 1000).toFixed(2)} 秒</div>
+        </div>`
+      ).join('');
+    } else {
+      speedEl.innerHTML = '<div class="speed-none">😢 全員不正解…</div>';
+    }
 
     // Audience result strip
     const strip = document.getElementById('aud-result-strip');
@@ -359,8 +600,8 @@
 
   function resetBars() {
     ['A','B','C','D'].forEach(c => {
-      document.getElementById('bf-'+c).style.width = '0%';
-      document.getElementById('bc-'+c).textContent = '0';
+      document.getElementById('bf-' + c).style.width = '0%';
+      document.getElementById('bc-' + c).textContent = '0';
     });
     document.getElementById('q-responded').textContent = '代表者 0 / 0 人回答';
   }
@@ -369,8 +610,8 @@
     const max = Math.max(1, ...Object.values(stats.counts));
     ['A','B','C','D'].forEach(c => {
       const cnt = stats.counts[c];
-      document.getElementById('bf-'+c).style.width = (cnt / max * 100) + '%';
-      document.getElementById('bc-'+c).textContent = cnt;
+      document.getElementById('bf-' + c).style.width = (cnt / max * 100) + '%';
+      document.getElementById('bc-' + c).textContent = cnt;
     });
   }
 

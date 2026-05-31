@@ -8,6 +8,9 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'jcadmin2026';
+
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ---- State ----
@@ -18,6 +21,8 @@ let state = {
   questionStartTime: null,
   questionDuration: 30,
   correctAnswer: null,
+  questionText: '',
+  choices: { A: '', B: '', C: '', D: '' },
 };
 
 let players = {};
@@ -26,10 +31,11 @@ let players = {};
 let audience = {};
 // socketId -> { name, score, currentPick, currentPickTime, answers[] }
 
-// 離脱後120秒間データを保持して復帰に備える
-let savedPlayers = {};  // name -> { score, answers, timer }
-let savedAudience = {}; // name -> { score, answers, timer }
+let savedPlayers = {};
+let savedAudience = {};
 const REJOIN_TTL = 120_000;
+
+let audienceScoring = { correctPts: 300, wrongPts: -100 };
 
 // ---- Helpers ----
 
@@ -76,14 +82,43 @@ function getAudienceRanking() {
 function getAudiencePickStats() {
   const counts = {};
   Object.values(audience).forEach(a => {
-    if (a.currentPick) counts[a.currentPick] = (counts[a.currentPick] || 0) + 1;
+    a.currentPick.forEach(r => {
+      counts[r] = (counts[r] || 0) + 1;
+    });
   });
   return {
     counts,
-    total: Object.values(audience).filter(a => a.currentPick).length,
+    total: Object.values(audience).filter(a => a.currentPick.length > 0).length,
     audienceCount: Object.keys(audience).length,
   };
 }
+
+// ---- Ranking Reveal ----
+
+let revealData = { active: false, ranking: [], index: 0, group: 'rep', label: '' };
+
+function getRevealInfo() {
+  return {
+    active: revealData.active,
+    index: revealData.index,
+    total: revealData.ranking.length,
+    next: revealData.ranking[revealData.index] || null,
+    nextRank: revealData.ranking.length - revealData.index,
+    group: revealData.group,
+    label: revealData.label,
+  };
+}
+
+// ---- Admin auth ----
+
+app.post('/admin-auth', (req, res) => {
+  const { password } = req.body || {};
+  if (password === ADMIN_PASSWORD) {
+    res.json({ ok: true });
+  } else {
+    res.status(401).json({ ok: false });
+  }
+});
 
 // ---- QR endpoint ----
 
@@ -107,7 +142,6 @@ io.on('connection', (socket) => {
     if (!name || typeof name !== 'string') return;
     const trimmed = name.trim().slice(0, 20);
     if (!trimmed) return;
-    // 保存データがあれば復元
     const saved = savedPlayers[trimmed];
     if (saved) {
       clearTimeout(saved.timer);
@@ -154,7 +188,7 @@ io.on('connection', (socket) => {
     audience[socket.id] = {
       name: trimmed,
       score: saved?.score ?? 0,
-      currentPick: null,
+      currentPick: [],
       currentPickTime: null,
       answers: saved?.answers ?? [],
     };
@@ -166,14 +200,20 @@ io.on('connection', (socket) => {
 
   socket.on('audience:pick', (repName) => {
     const a = audience[socket.id];
-    if (!a || state.phase !== 'question' || a.currentPick) return;
+    if (!a || state.phase !== 'preview') return;
     if (!getRepList().includes(repName)) return;
 
-    const responseMs = Date.now() - state.questionStartTime;
-    a.currentPick = repName;
-    a.currentPickTime = responseMs;
+    const idx = a.currentPick.indexOf(repName);
+    if (idx >= 0) {
+      a.currentPick.splice(idx, 1);
+    } else {
+      a.currentPick.push(repName);
+      if (!a.currentPickTime) {
+        a.currentPickTime = state.questionStartTime ? Date.now() - state.questionStartTime : 0;
+      }
+    }
 
-    socket.emit('audience:pick_ok', { pick: repName, time: responseMs });
+    socket.emit('audience:pick_ok', { picks: [...a.currentPick], time: a.currentPickTime });
     io.emit('audience:pick_stats', getAudiencePickStats());
   });
 
@@ -186,7 +226,66 @@ io.on('connection', (socket) => {
     socket.emit('player:count', Object.keys(players).length);
   });
 
+  // === RULES ===
+
+  socket.on('admin:show_rules', (text) => {
+    io.emit('screen:rules', { show: true, text: typeof text === 'string' ? text : '' });
+  });
+
+  socket.on('admin:hide_rules', () => {
+    io.emit('screen:rules', { show: false, text: '' });
+  });
+
+  socket.on('admin:inject_test_data', () => {
+    const repNames = ['田中太郎','鈴木花子','佐藤一郎','山田次郎','伊藤三郎','渡辺四郎','中村五郎','小林六子'];
+    const repScores = [8200, 6500, 5900, 4300, 3800, 2700, 1500, 800];
+    players = {};
+    repNames.forEach((name, i) => {
+      players['test_rep_' + i] = { name, score: repScores[i], currentAnswer: null, currentAnswerTime: null, answers: [] };
+    });
+
+    const audNames = ['青木あおい','木村きみこ','石田いしお','林はやし','松本まつこ','井上いのうえ','清水しみず','山口やまぐち','西村にしむら','河野こうの'];
+    const audScores = [7400, 6100, 5300, 4800, 3600, 2900, 2100, 1600, 1000, 400];
+    audience = {};
+    audNames.forEach((name, i) => {
+      audience['test_aud_' + i] = { name, score: audScores[i], currentPick: [], currentPickTime: null, answers: [] };
+    });
+
+    io.emit('player:count', Object.keys(players).length);
+    io.to('admin').emit('admin:players', getRanking());
+    io.to('admin').emit('admin:audience', getAudienceRanking());
+    io.to('admin').emit('admin:audience_count', Object.keys(audience).length);
+  });
+
+  socket.on('admin:ranking_start', ({ group, label } = {}) => {
+    const full = group === 'audience' ? getAudienceRanking() : getRanking();
+    if (!full.length) return;
+    revealData = { active: true, ranking: [...full].reverse(), index: 0, group: group || 'rep', label: label || '' };
+    io.emit('ranking:start', { total: revealData.ranking.length, group: revealData.group, label: revealData.label });
+    io.to('admin').emit('admin:reveal_state', getRevealInfo());
+  });
+
+  socket.on('admin:ranking_next', () => {
+    if (!revealData.active || revealData.index >= revealData.ranking.length) return;
+    const player = revealData.ranking[revealData.index];
+    const rank = revealData.ranking.length - revealData.index;
+    revealData.index++;
+    io.emit('ranking:show_player', { player, rank, total: revealData.ranking.length });
+    io.to('admin').emit('admin:reveal_state', getRevealInfo());
+  });
+
+  socket.on('admin:ranking_end', () => {
+    revealData.active = false;
+    io.emit('ranking:end');
+    io.to('admin').emit('admin:reveal_state', getRevealInfo());
+  });
+
   // === ADMIN ===
+
+  socket.on('admin:set_audience_scoring', ({ correctPts, wrongPts }) => {
+    if (typeof correctPts === 'number') audienceScoring.correctPts = correctPts;
+    if (typeof wrongPts  === 'number') audienceScoring.wrongPts  = wrongPts;
+  });
 
   socket.on('admin:join', () => {
     socket.join('admin');
@@ -195,16 +294,46 @@ io.on('connection', (socket) => {
       players: getRanking(),
       audience: getAudienceRanking(),
       audienceCount: Object.keys(audience).length,
+      audienceScoring: { ...audienceScoring },
     });
   });
 
-  socket.on('admin:start_question', ({ questionNumber, duration, isTest }) => {
+  socket.on('admin:preview_question', ({ questionNumber, duration, questionText, choices }) => {
+    Object.values(players).forEach(p => { p.currentAnswer = null; p.currentAnswerTime = null; });
+    Object.values(audience).forEach(a => { a.currentPick = []; a.currentPickTime = null; });
+    state = {
+      phase: 'preview',
+      questionNumber,
+      questionStartTime: null,
+      questionDuration: duration || 30,
+      correctAnswer: null,
+      isTest: false,
+      questionText: questionText || '',
+      choices: choices || { A: '', B: '', C: '', D: '' },
+    };
+    io.emit('game:state', state);
+    io.emit('audience:pick_stats', { counts: {}, total: 0, audienceCount: Object.keys(audience).length });
+    io.to('audience').emit('rep:list', getRepList());
+  });
+
+  socket.on('admin:start_countdown', () => {
+    if (state.phase !== 'preview') return;
+    io.emit('game:countdown');
+    setTimeout(() => {
+      state.phase = 'question';
+      state.questionStartTime = Date.now();
+      io.emit('game:state', state);
+      io.emit('stats:live', getLiveStats());
+    }, 3000);
+  });
+
+  socket.on('admin:start_question', ({ questionNumber, duration, isTest, questionText, choices }) => {
     Object.values(players).forEach(p => {
       p.currentAnswer = null;
       p.currentAnswerTime = null;
     });
     Object.values(audience).forEach(a => {
-      a.currentPick = null;
+      a.currentPick = [];
       a.currentPickTime = null;
     });
     state = {
@@ -214,6 +343,8 @@ io.on('connection', (socket) => {
       questionDuration: duration || 30,
       correctAnswer: null,
       isTest: !!isTest,
+      questionText: questionText || '',
+      choices: choices || { A: '', B: '', C: '', D: '' },
     };
     io.emit('game:state', state);
     io.emit('stats:live', getLiveStats());
@@ -226,7 +357,6 @@ io.on('connection', (socket) => {
     state.phase = 'revealed';
     state.correctAnswer = correctAnswer;
 
-    // Score representatives
     Object.values(players).forEach(p => {
       const isCorrect = p.currentAnswer === correctAnswer;
       const pts = state.isTest ? 0 : calcPoints(p.currentAnswerTime, state.questionDuration, isCorrect);
@@ -242,23 +372,29 @@ io.on('connection', (socket) => {
       }
     });
 
-    // Determine which reps answered correctly
     const correctReps = Object.values(players)
       .filter(p => p.currentAnswer === correctAnswer)
       .map(p => p.name);
 
-    // Score audience
+    const correctRespondents = Object.values(players)
+      .filter(p => p.currentAnswer === correctAnswer)
+      .map(p => ({ name: p.name, time: p.currentAnswerTime }))
+      .sort((a, b) => (a.time ?? Infinity) - (b.time ?? Infinity));
+
     Object.values(audience).forEach(a => {
-      const isCorrect = a.currentPick !== null && correctReps.includes(a.currentPick);
-      const pts = state.isTest ? 0 : calcPoints(a.currentPickTime, state.questionDuration, isCorrect);
+      const correctCount = a.currentPick.filter(r => correctReps.includes(r)).length;
+      const wrongCount   = a.currentPick.filter(r => !correctReps.includes(r)).length;
+      const rawPts = correctCount * audienceScoring.correctPts + wrongCount * audienceScoring.wrongPts;
+      const pts = state.isTest ? 0 : Math.max(0, rawPts);
       a.score += pts;
       if (!state.isTest) {
         a.answers.push({
           q: state.questionNumber,
-          pick: a.currentPick,
-          correct: isCorrect,
+          picks: [...a.currentPick],
+          correct: correctCount > 0,
+          correctCount,
+          wrongCount,
           pts,
-          time: a.currentPickTime,
         });
       }
     });
@@ -269,7 +405,7 @@ io.on('connection', (socket) => {
     const audiencePickStats = getAudiencePickStats();
 
     io.emit('game:state', state);
-    io.emit('game:revealed', { correctAnswer, stats, ranking, correctReps, audienceRanking, audiencePickStats });
+    io.emit('game:revealed', { correctAnswer, stats, ranking, correctReps, correctRespondents, audienceRanking, audiencePickStats, audienceScoring: { ...audienceScoring } });
     io.to('admin').emit('admin:players', ranking);
     io.to('admin').emit('admin:audience', audienceRanking);
   });
@@ -280,15 +416,45 @@ io.on('connection', (socket) => {
     io.emit('game:finished', { repRanking: getRanking(), audienceRanking: getAudienceRanking() });
   });
 
+  socket.on('admin:kick', ({ name, group } = {}) => {
+    if (!name || typeof name !== 'string') return;
+    if (group === 'audience') {
+      if (savedAudience[name]) { clearTimeout(savedAudience[name].timer); delete savedAudience[name]; }
+      const entry = Object.entries(audience).find(([, a]) => a.name === name);
+      if (entry) {
+        const [sid] = entry;
+        io.to(sid).emit('player:kicked');
+        delete audience[sid];
+        io.to('admin').emit('admin:audience', getAudienceRanking());
+        io.to('admin').emit('admin:audience_count', Object.keys(audience).length);
+      }
+    } else {
+      if (savedPlayers[name]) { clearTimeout(savedPlayers[name].timer); delete savedPlayers[name]; }
+      const entry = Object.entries(players).find(([, p]) => p.name === name);
+      if (entry) {
+        const [sid] = entry;
+        io.to(sid).emit('player:kicked');
+        delete players[sid];
+        io.emit('player:count', Object.keys(players).length);
+        io.to('admin').emit('admin:players', getRanking());
+        io.to('audience').emit('rep:list', getRepList());
+      }
+    }
+  });
+
   socket.on('admin:reset', () => {
     players = {};
     audience = {};
+    audienceScoring = { correctPts: 300, wrongPts: -100 };
+    revealData = { active: false, ranking: [], index: 0, group: 'rep', label: '' };
     state = {
       phase: 'lobby',
       questionNumber: 0,
       questionStartTime: null,
       questionDuration: 30,
       correctAnswer: null,
+      questionText: '',
+      choices: { A: '', B: '', C: '', D: '' },
     };
     io.emit('game:state', state);
     io.emit('player:count', 0);
@@ -302,7 +468,6 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     if (players[socket.id]) {
       const p = players[socket.id];
-      // 120秒間データ保持（復帰できるようにする）
       savedPlayers[p.name] = {
         score: p.score,
         answers: p.answers,
